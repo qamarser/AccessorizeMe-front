@@ -1,0 +1,49 @@
+@import url('https://fonts.googleapis.com/css2?family=Source+Serif+Pro:wght@400;700&display=swap');
+
+/* herosection */
+
+.container-hero-section {
+  display: flex;
+  justify-content:space-evenly;
+  align-items: center;
+  background-color: #dfefff;
+  padding: 20px;
+}
+
+.text-section {
+  max-width: 600px;
+  font-family: 'Source Serif Pro', serif;
+}
+
+h1 {
+  font-size: 63px;
+  font-weight: normal;
+  letter-spacing: 30px;
+}
+
+p {
+  font-size: 30px;
+  margin-top: 10px;
+}
+
+.image-section img {
+  width: 430px;
+  height: auto;
+}
+
+.shop-button {
+display: block;
+background-color: #1B3059;
+color: white;
+font-size: 27px;
+padding: 10px 20px;
+text-align: center;
+text-decoration: none;
+border-radius: 8px;
+margin-top: 338px;
+transition: 0.3s;
+}
+
+.shop-button:hover {
+  background-color: #142147;
+}

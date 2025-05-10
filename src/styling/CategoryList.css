@@ -1,0 +1,78 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@600&display=swap');
+
+.container-category-list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  background: #f9fafb;
+}
+
+h2 {
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.container-category-list h2 {
+  font-family: 'Roboto', sans-serif;
+  font-size: 36px;
+  font-weight: 600;
+  color: #333;
+  text-align: center;
+}
+
+.category-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.category.item {
+    display: flex
+;
+    flex-direction: column;
+    align-items: center;
+    width: 341px;
+    padding: 10px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    height: 314px;
+}
+
+.category.item:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.category.item img {
+  width: inherit;
+  /* height: 100px; */
+  object-fit: contain;
+  margin-bottom: 6px;
+}
+
+.category.item label {
+  font-family: 'Roboto', sans-serif;
+  font-size: 33px;
+  font-weight: 600;
+  color: #333;
+}
+
+/* Fallback utility classes if used */
+.text-center {
+  text-align: center;
+}
+
+.text-gray-500 {
+  color: #6b7280;
+}
