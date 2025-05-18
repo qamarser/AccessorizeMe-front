@@ -39,13 +39,14 @@ function App()
 {
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith("/admin");
-  
+  const isAuthRoute = location.pathname === "/login" || location.pathname === "/register";
+
   return (
     <AuthProvider>
       <CartProvider>
         <WishlistProvider>
           <>
-            {!isAdminRoute && <Navbar />}
+            {!isAdminRoute && !isAuthRoute && <Navbar />}
 
             <Routes>
               <Route path="/" element={<Home />} />

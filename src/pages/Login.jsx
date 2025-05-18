@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import "../styling/AuthForm.css";  
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -36,7 +37,6 @@ const Login = () => {
 
   return (
     <div className="login-container">
-      <h2>Login</h2>
       {error && <p style={{ color: "red" }}>{error}</p>}
 
       {isAuthenticated ? (
@@ -46,6 +46,7 @@ const Login = () => {
         </div>
       ) : (
         <form onSubmit={handleSubmit}>
+          <h2>Login</h2>
           <div>
             <label>Email:</label>
             <br />
@@ -66,16 +67,16 @@ const Login = () => {
               required
             />
           </div>
+          <p className="register-link">
+            Don't have an account? <a href="/register">Register</a>
+          </p>
           <button type="submit">Login</button>
         </form>
       )}
 
-      <p>
-        Don't have an account? <a href="/register">Register</a>
-      </p>
       <div>
         <img src="/image 28.png" alt="Login" />
-       </div>
+      </div>
     </div>
   );
 };

@@ -99,6 +99,7 @@ import { toast } from "react-toastify";
 import { addToCart } from "../api/cart";
 import { addToWishlist } from "../api/wishlistApi";
 import { useCart } from "../context/CartContext";
+import { useAuth } from "../context/AuthContext";
 import "../styling/ProductCard.css";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL || "";
@@ -106,6 +107,7 @@ const BASE_URL = import.meta.env.VITE_API_BASE_URL || "";
 const ProductCard = ({ product }) => {
   const navigate = useNavigate();
   const { refreshCart } = useCart();
+  const { isAuthenticated } = useAuth();
 
   const imageUrl =
     product.image_url ||
@@ -130,6 +132,10 @@ const ProductCard = ({ product }) => {
 
   const handleAddToCart = async (e) => {
     e.stopPropagation();
+    if (!isAuthenticated) {
+      navigate("/login");
+      return;
+    }
     try {
       // Pass product_variant_id if available, else null
       const productVariantId = product.product_variant_id || product.variant_id || null;
@@ -144,6 +150,10 @@ const ProductCard = ({ product }) => {
 
   const handleAddToWishlist = async (e) => {
     e.stopPropagation();
+    if (!isAuthenticated) {
+      navigate("/login");
+      return;
+    }
     try {
       await addToWishlist(product.id);
       toast.success("Added to wishlist");
@@ -173,23 +183,7 @@ const ProductCard = ({ product }) => {
         <button className="add-to-cart-btn" onClick={handleAddToCart}>
           <ShoppingCart size={16} /> Add to cart
         </button>
-        <button
-          className="favorite-btn"
-          onClick={async (e) => {
-            e.stopPropagation();
-            try {
-              const res = await addToWishlist(product.id);
-              if (res.alreadyAdded) {
-                toast.info("Already in wishlist");
-              } else {
-                toast.success("Added to wishlist");
-              }
-            } catch (err) {
-              console.error("Wishlist error:", err);
-              toast.error("Failed to add to wishlist");
-            }
-          }}
-        >
+        <button className="favorite-btn" onClick={handleAddToWishlist}>
           <Heart size={20} />
         </button>
       </div>

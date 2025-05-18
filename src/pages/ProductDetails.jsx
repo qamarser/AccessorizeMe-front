@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import ProductReviews from "../components/ProductReviews";
 import { FaStar, FaStarHalfAlt, FaRegStar } from "react-icons/fa";
 import { fetchProductById } from "../api/productApi";
@@ -7,18 +7,23 @@ import { toast, ToastContainer } from "react-toastify";
 import { useCart } from "../context/CartContext";
 import { addToCart } from "../api/cart";
 import { addToWishlist } from "../api/wishlistApi";
+import { useAuth } from "../context/AuthContext";
 import "../styling/ProductDetails.css";
 
 export default function ProductDetails() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [product, setProduct] = useState(null);
   const [selectedColor, setSelectedColor] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
+  const [selectedImageKey, setSelectedImageKey] = useState(0);
+
   const [loading, setLoading] = useState(true);
   const { refreshCart } = useCart();
   const [adding, setAdding] = useState(false);
   const [colorImages, setColorImages] = useState([]);
   const [thumbnailImages, setThumbnailImages] = useState([]);
+  const { isAuthenticated } = useAuth();
 
   const renderStars = (rating) => {
     const stars = [];
@@ -51,16 +56,25 @@ export default function ProductDetails() {
         setProduct(res);
         if (res.ProductColors?.length) {
           setSelectedColor(res.ProductColors[0]);
-          if (res.ProductColors[0].Images?.length) {
-            setSelectedImage(res.ProductColors[0].Images[0].image_url);
+          if (
+            res.ProductColors[0] &&
+            res.ProductColors[0].Images &&
+            res.ProductColors[0].Images.length > 0
+          ) {
+            setSelectedImage(res.ProductColors[0].Images[0]?.image_url || null);
             setColorImages(res.ProductColors[0].Images);
           }
-        } else if (res.Images?.length) {
+        } else if (res.Images && res.Images.length > 0) {
           setSelectedImage(res.Images[0].image_url);
           setColorImages([]);
         }
-        // Set thumbnail images to main images initially
-        setThumbnailImages(res.Images || []);
+        // console.log("Fetched product:", res);
+        // console.log(
+        //   "Selected color after fetch:",
+        //   res.ProductColors ? res.ProductColors[0] : null
+        // );
+        // Do not set main images in thumbnailImages to avoid duplication
+        setThumbnailImages([]);
       } catch (err) {
         toast.error("Failed to load product");
       } finally {
@@ -73,23 +87,21 @@ export default function ProductDetails() {
   useEffect(() => {
     if (!selectedColor || !product?.Images) return;
 
-    // Get **all** images related to the selected color
     const colorImages = product.Images.filter(
       (img) =>
         img.related_type === "productColor" &&
         img.related_id === selectedColor.id
     );
     if (colorImages.length > 0) {
-      setSelectedImage(colorImages[0].image_url); // show first color-specific image
+      setSelectedImage(colorImages[0].image_url);
       setThumbnailImages(colorImages);
-    } else if (product.Images.length > 0) {
-      setSelectedImage(product.Images[0].image_url); // fallback to first image
-      setThumbnailImages(product.Images);
+    } else {
+      setSelectedImage(product.Images[0].image_url);
+      setThumbnailImages([]);
     }
   }, [selectedColor, product]);
 
   const handleColorSelect = (color) => {
-    console.log("Selected color object:", color);
     setSelectedColor(color);
     if (color.Images && color.Images.length > 0) {
       setThumbnailImages(color.Images);
@@ -99,15 +111,35 @@ export default function ProductDetails() {
   };
 
   const handleAddToCart = async () => {
+    if (!isAuthenticated) {
+      navigate("/login");
+      return;
+    }
     try {
       setAdding(true);
-      await addToCart(product.id, 1, selectedColor?.id || null);
+      await addToCart(product.id, 1);
       await refreshCart();
       toast.success("Product added");
     } catch (error) {
       console.error("Error adding to cart:", error);
+      if (error.response) {
+        console.error("Response data:", error.response.data);
+      }
     } finally {
       setAdding(false);
+    }
+  };
+
+  const handleAddToWishlist = async () => {
+    if (!isAuthenticated) {
+      navigate("/login");
+      return;
+    }
+    try {
+      await addToWishlist(product.id);
+      toast.success("Added to wishlist");
+    } catch (err) {
+      toast.error("Failed to add to wishlist");
     }
   };
 
@@ -117,23 +149,38 @@ export default function ProductDetails() {
   return (
     <div className="product-details-container">
       <ToastContainer />
-      {/* Left: Thumbnails + Main Image */}
       <div className="flex flex-col items-center gap-4">
         <div className="product-thumbnails">
-          {/* {product.Images?.map((img, idx) => ( */}
-        {thumbnailImages.map((img, idx) => (
-          <img
-            key={idx}
-            src={img.image_url}
-            alt={`thumb-${idx}`}
-            className="product-thumbnail-img"
-            // onClick={() => setSelectedImage(img.image_url)}
-            // onClick={() => handleColorSelect(colorImages[idx])}
-            onClick={() => setSelectedImage(img.image_url)}
-          />
-        ))}
+          {product?.Images?.map((img, idx) => (
+            <img
+              key={`main-${idx}`}
+              src={img.image_url}
+              alt={`main-thumb-${idx}`}
+              className="product-thumbnail-img main-thumb"
+              onClick={() => {
+                if (selectedImage !== img.image_url) {
+                  setSelectedImage(img.image_url);
+                }
+              }}
+              title="Main product image"
+            />
+          ))}
+          {thumbnailImages.map((img, idx) => (
+            <img
+              key={`thumb-${idx}`}
+              src={img.image_url}
+              alt={`thumb-${idx}`}
+              className="product-thumbnail-img"
+              onClick={() => {
+                if (selectedImage !== img.image_url) {
+                  setSelectedImage(img.image_url);
+                }
+              }}
+            />
+          ))}
         </div>
         <img
+          key={selectedImageKey}
           src={selectedImage}
           alt="main product"
           className="product-main-img"
@@ -157,44 +204,18 @@ export default function ProductDetails() {
         <p className="product-price">${product.price}</p>
         <p className="product-description">{product.description}</p>
 
-        {/* Color Selector */}
-        {/* <div className="color-selector">
-          {product.ProductVariants?.map((variant, idx) =>
-            variant.ProductColor ? (
-              <button
-                key={idx}
-                className={`color-button ${
-                  selectedColor?.ProductColor?.color_code ===
-                  variant.ProductColor.color_code
-                    ? "selected"
-                    : "not-selected"
-                }`}
-                style={{ backgroundColor: variant.ProductColor.color_code }}
-                onClick={() => handleColorSelect(variant)}
-                title={`Select ${variant.ProductColor.color_name}`}
-                
-                // alt={variant.ProductColor.color_name}
-                // alert={`Select ${variant.ProductColor.color_name}`}
-              ></button>
-            ) : null
-          )}
-          
-        </div> */}
         <div className="color-selector">
-          {product.ProductColors?.map((color, idx) => {
-            console.log("Rendering color button:", color.color_name); // Add this line here
-            return (
-              <button
-                key={idx}
-                className={`color-button ${
-                  selectedColor?.id === color.id ? "selected" : "not-selected"
-                }`}
-                style={{ backgroundColor: color.color_code }}
-                onClick={() => handleColorSelect(color)}
-                title={`Select ${color.color_name}`}
-              ></button>
-            );
-          })}
+          {product.ProductColors?.map((color, idx) => (
+            <button
+              key={idx}
+              className={`color-button ${
+                selectedColor?.id === color.id ? "selected" : "not-selected"
+              }`}
+              style={{ backgroundColor: color.color_code }}
+              onClick={() => handleColorSelect(color)}
+              title={`Select ${color.color_name}`}
+            ></button>
+          ))}
         </div>
 
         {/* <p className="product-stock">
@@ -212,14 +233,7 @@ export default function ProductDetails() {
           </button>
           <button
             className="action-button add-to-wishlist"
-            onClick={async () => {
-              try {
-                await addToWishlist(product.id);
-                toast.success("Added to wishlist");
-              } catch (err) {
-                toast.error("Failed to add to wishlist");
-              }
-            }}
+            onClick={handleAddToWishlist}
           >
             Add to Wishlist
           </button>

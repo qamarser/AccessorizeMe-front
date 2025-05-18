@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { register } from "../api/auth";
 import { toast } from "react-toastify";
+import "../styling/AuthForm.css";  
 
 const Register = () => {
   const [name, setName] = useState("");
@@ -25,9 +26,9 @@ const Register = () => {
 
   return (
     <div className="register-container">
-      <h2>Register</h2>
       {error && <p style={{ color: "red" }}>{error}</p>}
       <form onSubmit={handleSubmit}>
+        <h2>Register</h2>
         <div>
           <label>Name:</label>
           <br />
@@ -58,6 +59,9 @@ const Register = () => {
             required
           />
         </div>
+        <p className="register-link">
+          Already have an account? <a href="/login">Login</a>
+        </p>
         <button type="submit">Register</button>
       </form>
       <div>
