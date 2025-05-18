@@ -21,7 +21,7 @@ const ProductReviews = ({ productId }) => {
       try {
         const data = await fetchReviewsByProductId(productId);
         setReviews(data);
-        toast.success("Reviews loaded successfully");
+        // toast.success("Reviews loaded successfully");
       } catch (error) {
         toast.error("Failed to load reviews");
         console.error("Failed to load reviews", error);

@@ -3,6 +3,16 @@ import { useCart } from "../context/CartContext";
 import { updateCartItem, deleteCartItem } from "../api/cart";
 import { useNavigate } from "react-router-dom";
 
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || "";
+
+function getImageUrl(url) {
+  if (!url) return "";
+  if (url.startsWith("http") || url.startsWith("https")) {
+    return url;
+  }
+  return `${BASE_URL}${url}`;
+}
+
 export default function Cart() {
   const { cart, loading, error, refreshCart, totalAmount } = useCart();
   console.log("Cart data:", cart);
@@ -46,26 +56,49 @@ export default function Cart() {
 
   return (
     <div className="p-6">
-      <h2 className="text-2xl font-semibold mb-4">Your Cart</h2>
+      <h2>Your Cart</h2>
       <ul>
-        {cart.map((item) => (
-          <li key={item.id} className="mb-4 border-b pb-2">
-            <p className="font-semibold">{item.Product ? item.Product.name : "Unknown Product"}</p>
-            <p>
-              Quantity: 
-              <button onClick={() => handleDecrement(item)} className="ml-2 mr-2 px-2 py-1 bg-gray-300 rounded">-</button>
-              {item.quantity}
-              <button onClick={() => handleIncrement(item)} className="ml-2 px-2 py-1 bg-gray-300 rounded">+</button>
-            </p>
-            <p>Price: ${item.Product ? item.Product.price : "N/A"}</p>
-            <button onClick={() => handleDelete(item)} className="mt-2 px-3 py-1 bg-red-500 text-white rounded">Remove</button>
-          </li>
-        ))}
+        {cart.map((item) => {
+          console.log("Cart item:", item); // Debug log to inspect cart item structure
+          const product = item.Product;
+          let imageUrl = "";
+          if (item.ProductVariant && item.ProductVariant.Images && item.ProductVariant.Images.length > 0) {
+            imageUrl = getImageUrl(item.ProductVariant.Images[0].image_url);
+          } else if (product) {
+            if (product.image_url) {
+              imageUrl = getImageUrl(product.image_url);
+            } else if (product.Images && product.Images.length > 0) {
+              imageUrl = getImageUrl(product.Images[0].image_url);
+            }
+          }
+          return (
+            <li key={item.id} className="flex items-center space-x-4 mb-4">
+              {imageUrl && (
+                <img
+                  src={imageUrl}
+                  alt={product ? product.name : "Product image"}
+                  className="w-20 h-20 object-cover rounded"
+                />
+              )}
+              <div>
+                <p className="font-semibold">{product ? product.name : "Unknown Product"}</p>
+                <p>
+                  Quantity: 
+                  <button onClick={() => handleDecrement(item)}>-</button>
+                  {item.quantity}
+                  <button onClick={() => handleIncrement(item)}>+</button>
+                </p>
+                <p>Price: ${product ? product.price : "N/A"}</p>
+                <button onClick={() => handleDelete(item)}>Remove</button>
+              </div>
+            </li>
+          );
+        })}
       </ul>
-      <div className="mt-4 font-semibold text-lg">
+      <div>
         Total Amount: ${totalAmount.toFixed(2)}
       </div>
-      <button onClick={handleCheckout} className="mt-6 px-6 py-3 bg-blue-600 text-white rounded hover:bg-blue-700">
+      <button onClick={handleCheckout}>
         Checkout
       </button>
     </div>

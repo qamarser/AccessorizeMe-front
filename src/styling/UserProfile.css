@@ -1,0 +1,124 @@
+.profile-card {
+    width: 400px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    margin: 30px auto;
+    font-family: sans-serif;
+    padding: 20px;
+    box-sizing: border-box;
+  }
+  
+  .profile-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  
+  .profile-img-wrapper {
+    position: relative;
+    margin-right: 10px;
+  }
+  
+  .profile-img {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    border: 2px solid #ccc;
+  }
+  
+  .edit-img-icon {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    background: #eee;
+    border-radius: 50%;
+    font-size: 12px;
+    padding: 4px;
+    cursor: pointer;
+  }
+  
+  .profile-name {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0;
+  }
+  
+  .profile-email {
+    font-size: 14px;
+    color: gray;
+    margin: 0;
+  }
+  
+  .close-btn {
+    background: none;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    color: gray;
+  }
+  
+  .profile-body {
+    border-top: 1px solid #eee;
+    padding-top: 15px;
+  }
+  
+  .profile-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  
+  .label {
+    color: #666;
+    font-size: 14px;
+  }
+  
+  .value {
+    font-size: 14px;
+  }
+  
+  .value input {
+    font-size: 14px;
+    padding: 4px 6px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+  }
+  
+  .profile-footer {
+    margin-top: 20px;
+    text-align: right;
+  }
+  
+  .save-btn,
+  .upload-btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-left: 10px;
+  }
+  
+  .save-btn {
+    background-color: #007bff;
+    color: white;
+  }
+  
+  .upload-btn {
+    background-color: #28a745;
+    color: white;
+  }
+
+  .change-password-btn {
+    background-color: #6f42c1;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-left: 10px;
+  }
+  

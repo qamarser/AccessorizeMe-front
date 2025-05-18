@@ -17,8 +17,34 @@ export const fetchCustomerOrders = async (token) => {
 };
 
 
-export const placeOrder = async (orderData) => {
-  const response = await axios.post("/api/orders", orderData, {
+// export const placeOrder = async (orderData) => {
+//   const response = await axios.post("/api/orders", orderData, {
+//     withCredentials: true,
+//   });
+//   return response.data;
+// };
+
+export const placeOrder = async (orderPayload) => {
+  const response = await axios.post("/api/orders", orderPayload, {
+    withCredentials: true,
+  });
+  return response.data;
+};
+
+
+export const updateOrderStatus = async ( orderId, status ) => {
+  const response = await axios.patch(
+    `/api/orders/${orderId}/status`,
+    { status },
+    {
+      withCredentials: true,
+    }
+  );
+  return response.data;
+}
+
+export const deleteOrder = async ( orderId ) => {
+  const response = await axios.delete(`/api/orders/${orderId}`, {
     withCredentials: true,
   });
   return response.data;

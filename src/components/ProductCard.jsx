@@ -131,7 +131,9 @@ const ProductCard = ({ product }) => {
   const handleAddToCart = async (e) => {
     e.stopPropagation();
     try {
-      await addToCart(product.id, 1);
+      // Pass product_variant_id if available, else null
+      const productVariantId = product.product_variant_id || product.variant_id || null;
+      await addToCart(product.id, 1, productVariantId);
       refreshCart();
       toast.success("Product added to cart");
     } catch (err) {

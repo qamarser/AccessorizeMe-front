@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { fetchAllShippings } from "../api/shippingApi";
+import { fetchAllShippings } from "../../../api/shippingApi";
 import { toast } from "react-toastify";
 
 export default function ShippingList() {

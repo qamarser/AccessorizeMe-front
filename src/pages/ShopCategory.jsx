@@ -50,7 +50,7 @@ const ShopCategory = () => {
 
   return (
     <div className="container-shop">
-      <aside className="sidebar">
+      <aside className="sidebar_shop">
         <h2>{category ? category.name : "Category"}</h2>
         {/* Filters can be added here if needed */}
       </aside>

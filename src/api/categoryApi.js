@@ -26,8 +26,8 @@ export const createCategory = async (formData, token) => {
     const response = await axios.post(`${BASE_URL}/api/categories`, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
-        Authorization: `Bearer ${token}`,
       },
+      withCredentials: true,
     });
     return response.data;
   } catch (error) {
@@ -41,11 +41,19 @@ export const createCategory = async (formData, token) => {
 
 export const updateCategory = async (id, data, token) => {
   try {
-    const response = await axios.put(`${BASE_URL}/api/categories/${id}`, data, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const config = {
+      withCredentials: true,
+    };
+    if (data instanceof FormData) {
+      config.headers = {
+        "Content-Type": "multipart/form-data",
+      };
+    }
+    const response = await axios.put(
+      `${BASE_URL}/api/categories/${id}`,
+      data,
+      config
+    );
     return response.data;
   } catch (error) {
     console.error(
@@ -56,12 +64,11 @@ export const updateCategory = async (id, data, token) => {
   }
 };
 
+
 export const deleteCategory = async (id, token) => {
   try {
     const response = await axios.delete(`${BASE_URL}/api/categories/${id}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+      withCredentials: true,
     });
     return response.data;
   } catch (error) {

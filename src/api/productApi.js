@@ -1,7 +1,6 @@
 import axiosInstance from "./axiosInstance";
 
 // Fetch all products with optional filters
-// Fetch all products with optional filters
 export const fetchAllProducts = async (filters = {}) => {
   const params = new URLSearchParams();
 
@@ -17,6 +16,15 @@ export const fetchAllProducts = async (filters = {}) => {
   if (filters.search) {
     params.append("search", filters.search);
   }
+  if (filters.page) {
+    params.append("page", filters.page);
+  }
+  if (filters.sortBy) {
+    params.append("sortBy", filters.sortBy);
+  }
+  if (filters.sortOrder) {
+    params.append("sortOrder", filters.sortOrder);
+  }
 
   const response = await axiosInstance.get(`/api/products?${params.toString()}`);
   return response.data;
@@ -25,22 +33,16 @@ export const fetchAllProducts = async (filters = {}) => {
 
 // Fetch product by ID
 export const fetchProductById = async (productId) => {
-  const response = await axiosInstance.get(`/api/products/${productId}`);
-  return response.data;
+  try {
+    const response = await axiosInstance.get(`/api/products/${productId}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching product:", error);
+    throw new Error("Failed to fetch product");
+  }
 };
 
-//  Fetch best sellers
-// export const fetchBestSellers = async () => {
-//   try {
-//    await axiosInstance.get(
-//       `${BASE_URL}/products/best-sellers`
-//     );
-//     return response.data;
-//   } catch (error) {
-//     console.error("Failed to fetch best sellers:", error);
-//     return [];
-//   }
-// };
+
 export const fetchBestSellers = async (productId) => {
   const response = await axiosInstance.get(`/api/products/best-sellers`);
   return response.data;

@@ -1,6 +1,6 @@
 import React from "react";
 import ShippingForm from "../components/ShippingForm";
-
+import "../styling/ShippingForm.css"
 export default function ShippingPage() {
   return (
     <div>

@@ -32,7 +32,7 @@ const CustomerOrders = () => {
         <table border="1" cellPadding="5" cellSpacing="0">
           <thead>
             <tr>
-              <th>Order ID</th>
+              {/* <th>Order ID</th> */}
               <th>Total Amount</th>
               <th>Status</th>
               <th>Created At</th>
@@ -45,7 +45,7 @@ const CustomerOrders = () => {
           <tbody>
             {orders.map((order) => (
               <tr key={order.id}>
-                <td>{order.id}</td>
+                {/* <td>{order.id}</td> */}
                 {/* <td>${order.total_amount.toFixed(2)}</td> */}
                 <td>
                   $
@@ -68,7 +68,6 @@ const CustomerOrders = () => {
                     {order.OrderItems && order.OrderItems.length > 0 ? (
                       order.OrderItems.map((item) => (
                         <li key={item.id}>
-                          {item.Product ? item.Product.name : "Product"} - Qty:{" "}
                           {item.Product ? item.Product.name : "Product"} - Qty: {item.quantity} - Price: ${item.price ? Number(item.price).toFixed(2) : "0.00"}
 
                         </li>

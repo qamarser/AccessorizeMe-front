@@ -1,11 +1,14 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import { createShipping } from "../api/shippingApi";
 import { toast } from "react-toastify";
 import { useCart } from "../context/CartContext";
+import { placeOrder } from "../api/orderApi";
 import "../styling/ShippingForm.css";
 export default function ShippingForm() {
   const { refreshCart, clearCart, cart } = useCart();
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     full_name: "",
@@ -30,7 +33,7 @@ export default function ShippingForm() {
     try {
       // 1️⃣ Save shipping info
       const shipping = await createShipping(formData);
-      toast.success("Shipping info saved");
+      // toast.success("Shipping info saved");
       // 2️⃣ Place the order
       const orderPayload = {
         shipping_id: shipping.id, // Make sure your backend returns shipping.id
@@ -39,15 +42,15 @@ export default function ShippingForm() {
           quantity: item.quantity,
         })),
       };
-      const response = await axios.post("/api/orders", orderPayload, {
-        withCredentials: true,
-      });
-      // await refreshCart();
-      toast.success("Place order successfully");
+      const order = await placeOrder(orderPayload); // using your helper API
+      toast.success("Order placed successfully");
+
       // 3️⃣ Clear cart & refresh
       clearCart();
       await refreshCart();
 
+      // 4️⃣  navigate to home
+      navigate("/");
       // Optional: redirect or reset form
     } catch (err) {
       toast.error(
@@ -55,8 +58,6 @@ export default function ShippingForm() {
       );
     }
   };
-
-
 
   return (
     <div className="p-6 max-w-lg mx-auto bg-white shadow-md rounded-md">
@@ -107,6 +108,7 @@ export default function ShippingForm() {
         <button
           type="submit"
           className="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded transition duration-300"
+          onClick={handleSubmit}
         >
           Save Shipping Info
         </button>

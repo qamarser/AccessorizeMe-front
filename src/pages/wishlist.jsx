@@ -76,28 +76,28 @@ export default function Wishlist() {
   if (!wishlist.length) return <p>Your wishlist is empty.</p>;
 
   return (
-    <div className="p-6">
-      <h2 className="text-2xl font-semibold mb-4">Your Wishlist</h2>
+    <div>
+      <h2 >Your Wishlist</h2>
       <ul>
         {wishlist.map((item) => (
-          <li key={item.id} className="mb-4 border-b pb-2">
+          <li key={item.id} >
             <div
-              className="cursor-pointer"
+
               onClick={() => navigate(`/product/${item.Product.id}`)}
             >
-              <p className="font-semibold">{item.Product.name}</p>
+              <p >{item.Product.name}</p>
               <p>Price: ${item.Product.price}</p>
             </div>
-            <div className="flex gap-2 mt-2">
+            <div >
               <button
                 onClick={() => handleAddToCart(item.Product.id)}
-                className="px-3 py-1 bg-blue-600 text-white rounded"
+
               >
                 Add to Cart
               </button>
               <button
                 onClick={() => handleRemoveFromWishlist(item.id)}
-                className="px-3 py-1 bg-red-500 text-white rounded"
+
               >
                 Remove
               </button>

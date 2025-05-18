@@ -1,275 +1,3 @@
-// import React, { useEffect, useState } from "react";
-// import { useRef } from "react";
-// import { useLocation, useNavigate } from "react-router-dom";
-// import { fetchAllProducts } from "../api/productApi";
-// import { fetchAllCategories } from "../api/categoryApi";
-// import { Heart, ShoppingCart } from "lucide-react";
-// import { addToCart } from "../api/cart";
-// import { toast } from "react-toastify";
-// import { useCart } from "../context/CartContext";
-// import { addToWishlist } from "../api/wishlistApi";
-// import "../styling/Shop.css";
-
-// const BASE_URL = import.meta.env.VITE_API_BASE_URL || "";
-
-// const Shop = () => {
-//   const location = useLocation();
-//   const navigate = useNavigate();
-//   const { refreshCart } = useCart();
-//   const lastSearchRef = useRef("");
-
-//   // Unified filters state
-//   const [filters, setFilters] = useState({
-//     search: "",
-//     minPrice: 0,
-//     maxPrice: 1000,
-//     categoryId: null,
-//   });
-
-//   const [categories, setCategories] = useState([]);
-//   const [products, setProducts] = useState([]);
-//   const [loadingProducts, setLoadingProducts] = useState(true);
-
-//   // Debounce timer for search input
-//   const [debounceTimer, setDebounceTimer] = useState(null);
-
-//   // Fetch categories on mount
-//   useEffect(() => {
-//     const loadCategories = async () => {
-//       try {
-//         const data = await fetchAllCategories();
-//         setCategories(data);
-//       } catch (err) {
-//         console.error("Failed to load categories", err);
-//       }
-//     };
-//     loadCategories();
-//   }, []);
-
-//   // Parse URL query params to sync filters on mount and location change
-//   useEffect(() => {
-//     const params = new URLSearchParams(location.search);
-//     const search = params.get("search") || "";
-//     const minPrice = params.get("minPrice") ? Number(params.get("minPrice")) : 0;
-//     const maxPrice = params.get("maxPrice") ? Number(params.get("maxPrice")) : 1000;
-//     const categoryId = params.get("category") ? Number(params.get("category")) : null;
-
-//     // Only update filters if different to avoid infinite loop
-//     setFilters((prevFilters) => {
-//       if (
-//         prevFilters.search !== search ||
-//         prevFilters.minPrice !== minPrice ||
-//         prevFilters.maxPrice !== maxPrice ||
-//         prevFilters.categoryId !== categoryId
-//       ) {
-//         return { search, minPrice, maxPrice, categoryId };
-//       }
-//       return prevFilters;
-//     });
-//   }, [location.search]);
-
-//   // Update URL query params when filters change
-//   useEffect(() => {
-//     const params = new URLSearchParams();
-
-//     if (filters.search) params.set("search", filters.search);
-//     if (filters.minPrice !== 0) params.set("minPrice", filters.minPrice.toString());
-//     if (filters.maxPrice !== 1000) params.set("maxPrice", filters.maxPrice.toString());
-//     if (filters.categoryId !== null) params.set("category", filters.categoryId.toString());
-
-//     const newSearch = params.toString();
-
-//     if (newSearch !== lastSearchRef.current) {
-//       lastSearchRef.current = newSearch;
-//       navigate(
-//         {
-//           pathname: "/shop",
-//           search: newSearch,
-//         },
-//         { replace: true }
-//       );
-//     }
-//   }, [filters, navigate]);
-
-//   // Fetch products when filters change (debounced for search)
-//   useEffect(() => {
-//     const fetchProducts = async () => {
-//       try {
-//         setLoadingProducts(true);
-//         const query = {
-//           search: filters.search,
-//           minPrice: filters.minPrice,
-//           maxPrice: filters.maxPrice,
-//         };
-//         let productsData = [];
-//         if (filters.categoryId) {
-//           productsData = await fetchAllProducts({ ...query, category: filters.categoryId });
-//         } else {
-//           productsData = await fetchAllProducts(query);
-//         }
-//         setProducts(productsData);
-//       } catch (error) {
-//         console.error("Error loading products", error);
-//       } finally {
-//         setLoadingProducts(false);
-//       }
-//     };
-
-//     if (debounceTimer) clearTimeout(debounceTimer);
-
-//     // Debounce search input by 300ms
-//     const timer = setTimeout(() => {
-//       fetchProducts();
-//     }, 300);
-
-//     setDebounceTimer(timer);
-
-//     return () => clearTimeout(timer);
-//   }, [filters]);
-
-//   const getImageUrl = (url) => {
-//     if (!url) return "";
-//     if (url.startsWith("http") || url.startsWith("https")) {
-//       return url;
-//     }
-//     return `${BASE_URL}${url}`;
-//   };
-
-//   return (
-//     <div className="container-shop">
-//       {/* Sidebar */}
-//       <aside className="sidebar">
-//         <h2>Our Categories</h2>
-//         <ul className="category-list">
-//           {categories.map((cat) => (
-//             <li
-//               key={cat.id}
-//               className={`category-item ${filters.categoryId === cat.id ? "selected" : ""}`}
-//               onClick={() => {
-//                 setFilters((prev) => ({
-//                   ...prev,
-//                   categoryId: prev.categoryId === cat.id ? null : cat.id,
-//                 }));
-//                 if (filters.categoryId === cat.id) {
-//                   navigate("/shop");
-//                 } else {
-//                   navigate(`/shop?category=${cat.id}`);
-//                 }
-//               }}
-//             >
-//               {cat.name}
-//             </li>
-//           ))}
-//         </ul>
-
-//         {/* Price Range Slider */}
-//         <div className="price-range">
-//           <label>Min Price: {filters.minPrice}</label>
-//           <input
-//             type="range"
-//             min="0"
-//             max="1000"
-//             value={filters.minPrice}
-//             onChange={(e) =>
-//               setFilters((prev) => ({
-//                 ...prev,
-//                 minPrice: Number(e.target.value),
-//               }))
-//             }
-//           />
-//           <label>Max Price: {filters.maxPrice}</label>
-//           <input
-//             type="range"
-//             min="0"
-//             max="1000"
-//             value={filters.maxPrice}
-//             onChange={(e) =>
-//               setFilters((prev) => ({
-//                 ...prev,
-//                 maxPrice: Number(e.target.value),
-//               }))
-//             }
-//           />
-//         </div>
-//       </aside>
-
-//       {/* Product Grid */}
-//       <main className="product-grid">
-//         {loadingProducts ? (
-//           <div className="loading-products">Loading products...</div>
-//         ) : products.length === 0 ? (
-//           <div className="no-products">
-//             No products found. Try adjusting your search or filters.
-//           </div>
-//         ) : (
-//           products.map((product) => {
-//             const imageUrl =
-//               product.image_url ||
-//               (product.Images && product.Images.length > 0 && product.Images[0].image_url) ||
-//               "";
-//             const altText =
-//               product.alt_text ||
-//               (product.Images && product.Images.length > 0 && product.Images[0].alt_text) ||
-//               product.name;
-
-//             return (
-//               <div
-//                 key={product.id}
-//                 className="product-card"
-//                 style={{ cursor: "pointer" }}
-//                 onClick={() => navigate(`/product/${product.id}`)}
-//               >
-//                 {imageUrl ? (
-//                   <img src={getImageUrl(imageUrl)} alt={altText} className="product-image" />
-//                 ) : null}
-//                 <div className="hover-content">
-//                   <div className="details">
-//                     <h3>{product.name}</h3>
-//                     <p>${product.price ? Number(product.price).toFixed(2) : "N/A"}</p>
-//                   </div>
-//                   <button
-//                     className="add-to-cart-btn"
-//                     onClick={async (e) => {
-//                       e.stopPropagation();
-//                       try {
-//                         await addToCart(product.id, 1);
-//                         refreshCart();
-//                         toast.success("Product added to cart");
-//                       } catch (err) {
-//                         console.error("Failed to add product to cart", err);
-//                         toast.error("Failed to add product to cart");
-//                       }
-//                     }}
-//                   >
-//                     <ShoppingCart size={16} /> Add to cart
-//                   </button>
-//                   <button
-//                     className="favorite-btn"
-//                     onClick={async (e) => {
-//                       e.stopPropagation();
-//                       try {
-//                         await addToWishlist(product.id);
-//                         toast.success("Added to wishlist");
-//                       } catch (err) {
-//                         toast.error("Failed to add to wishlist");
-//                       }
-//                     }}
-//                   >
-//                     <Heart size={20} />
-//                   </button>
-//                 </div>
-//               </div>
-//             );
-//           })
-//         )}
-//       </main>
-//     </div>
-//   );
-// };
-
-// export default Shop;
-
-
 import React, { useEffect, useState, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { fetchAllProducts } from "../api/productApi";
@@ -282,6 +10,7 @@ import ProductCard from "../components/ProductCard";
 import "../styling/Shop.css";
 import Slider from "rc-slider";
 import "rc-slider/assets/index.css";
+import { Search } from "lucide-react";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL || "";
 
@@ -298,10 +27,17 @@ const Shop = () => {
     categoryId: null,
   });
 
+  const [page, setPage] = useState(1);
+  const [sortBy, setSortBy] = useState("name");
+  const [sortOrder, setSortOrder] = useState("ASC");
+
   const [categories, setCategories] = useState([]);
   const [products, setProducts] = useState([]);
   const [loadingProducts, setLoadingProducts] = useState(true);
   const [debounceTimer, setDebounceTimer] = useState(null);
+  const [totalCount, setTotalCount] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
+  const [searchInput, setSearchInput] = useState("");
 
   useEffect(() => {
     const loadCategories = async () => {
@@ -327,6 +63,9 @@ const Shop = () => {
     const categoryId = params.get("category")
       ? Number(params.get("category"))
       : null;
+    const pageParam = params.get("page") ? Number(params.get("page")) : 1;
+    const sortByParam = params.get("sortBy") || "name";
+    const sortOrderParam = params.get("sortOrder") || "ASC";
 
     setFilters((prevFilters) => {
       if (
@@ -339,6 +78,11 @@ const Shop = () => {
       }
       return prevFilters;
     });
+
+    setPage(pageParam);
+    setSortBy(sortByParam);
+    setSortOrder( sortOrderParam );
+    setSearchInput(search);
   }, [location.search]);
 
   useEffect(() => {
@@ -350,6 +94,9 @@ const Shop = () => {
       params.set("maxPrice", filters.maxPrice.toString());
     if (filters.categoryId !== null)
       params.set("category", filters.categoryId.toString());
+    if (page !== 1) params.set("page", page.toString());
+    if (sortBy !== "name") params.set("sortBy", sortBy);
+    if (sortOrder !== "ASC") params.set("sortOrder", sortOrder);
 
     const newSearch = params.toString();
     if (newSearch !== lastSearchRef.current) {
@@ -362,7 +109,7 @@ const Shop = () => {
         { replace: true }
       );
     }
-  }, [filters, navigate]);
+  }, [filters, page, sortBy, sortOrder, navigate]);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -372,11 +119,20 @@ const Shop = () => {
           search: filters.search,
           minPrice: filters.minPrice,
           maxPrice: filters.maxPrice,
+          page,
+          sortBy,
+          sortOrder,
         };
-        let productsData = filters.categoryId
+        // let productsData = filters.categoryId
+        //   ? await fetchAllProducts({ ...query, category: filters.categoryId })
+        //   : await fetchAllProducts(query);
+        // setProducts(productsData);
+        let response = filters.categoryId
           ? await fetchAllProducts({ ...query, category: filters.categoryId })
           : await fetchAllProducts(query);
-        setProducts(productsData);
+        setProducts(response.formatted);
+        setTotalCount(response.totalCount);
+        setTotalPages(response.totalPages);
       } catch (error) {
         console.error("Error loading products", error);
       } finally {
@@ -388,7 +144,7 @@ const Shop = () => {
     const timer = setTimeout(fetchProducts, 300);
     setDebounceTimer(timer);
     return () => clearTimeout(timer);
-  }, [filters]);
+  }, [filters, page, sortBy, sortOrder]);
 
   const getImageUrl = (url) => {
     if (!url) return "";
@@ -422,10 +178,28 @@ const Shop = () => {
     }
   };
 
+  const handleSearchIconClick = () => {
+    setFilters((prev) => ({ ...prev, search: searchInput }));
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      setFilters((prev) => ({ ...prev, search: searchInput }));
+    }
+  };
+
+  const handlePrevPage = () => {
+    if (page > 1) setPage(page - 1);
+  };
+
+  const handleNextPage = () => {
+    if (page < totalPages) setPage(page + 1);
+  };
+
   return (
     <div className="container-shop">
       {/* Sidebar */}
-      <aside className="sidebar">
+      <aside className="sidebar_shop">
         <h2>Our Categories</h2>
         <ul className="category-list">
           {categories.map((cat) => (
@@ -450,32 +224,56 @@ const Shop = () => {
           ))}
         </ul>
         <div className="price-range">
-          <label>Min Price: {filters.minPrice}</label>
-          <input
-            type="range"
-            min="0"
-            max="1000"
-            value={filters.minPrice}
-            onChange={(e) =>
-              setFilters((prev) => ({
-                ...prev,
-                minPrice: Number(e.target.value),
-              }))
+          <label>
+            Price Range: ${filters.minPrice} - ${filters.maxPrice}
+          </label>
+          <Slider
+            range
+            min={0}
+            max={1000}
+            value={[filters.minPrice, filters.maxPrice]}
+            onChange={([min, max]) =>
+              setFilters((prev) => ({ ...prev, minPrice: min, maxPrice: max }))
             }
           />
-          <label>Max Price: {filters.maxPrice}</label>
+        </div>
+
+        {/* Search Input */}
+        <div className="shop-search-bar">
           <input
-            type="range"
-            min="0"
-            max="1000"
-            value={filters.maxPrice}
-            onChange={(e) =>
-              setFilters((prev) => ({
-                ...prev,
-                maxPrice: Number(e.target.value),
-              }))
-            }
+            type="text"
+            placeholder="Search products..."
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
+            onKeyDown={handleKeyDown}
+            className="shop-search-bar-input"
           />
+          <Search
+            size={20}
+            className="shop-search-bar-icon"
+            onClick={handleSearchIconClick}
+          />
+        </div>
+
+        {/* sort controller */}
+        <div className="sort-controls">
+          <label htmlFor="sortBy">Sort By:</label>
+          <select
+            id="sortBy"
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+          >
+            <option value="name">Name</option>
+            <option value="price">Price</option>
+          </select>
+          <select
+            id="sortOrder"
+            value={sortOrder}
+            onChange={(e) => setSortOrder(e.target.value)}
+          >
+            <option value="ASC">Ascending</option>
+            <option value="DESC">Descending</option>
+          </select>
         </div>
       </aside>
 
@@ -511,6 +309,20 @@ const Shop = () => {
           })
         )}
       </main>
+
+      {/* Pagination Controls */}
+      <div className="pagination-controls">
+        <button onClick={handlePrevPage} disabled={page === 1}>
+          Previous
+        </button>
+        <span>Page {page}</span>
+        <button onClick={handleNextPage} disabled={page === totalPages}>
+          Next
+        </button>
+        <span>
+          Page {page} of {totalPages}
+        </span>
+      </div>
     </div>
   );
 };
