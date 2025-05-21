@@ -40,25 +40,26 @@ p {
 
 .shop-button {
 display: block;
-background-color: #1B3059;
+/* background-color: #1B3059;
 color: white;
-font-size: 27px;
+font-size: 27px; */
 padding: 10px 20px;
 text-align: center;
 text-decoration: none;
-border-radius: 8px;
+/* border-radius: 8px; */
 margin-top: 338px;
-transition: 0.3s;
+/* transition: 0.3s; */
+margin-right: 104px;
 }
 
-.shop-button:hover {
+/* .shop-button:hover {
   background-color: #142147;
-}
+} */
 
 
 /* Responsive adjustments */
 @media (max-width: 1024px) {
-  h1 {
+  .text-section h1 {
     font-size: 48px;
     letter-spacing: 15px;
   }
@@ -80,7 +81,7 @@ transition: 0.3s;
     padding: 30px 10px;
   }
 
-  h1 {
+  .text-section h1 {
     font-size: 40px;
     letter-spacing: 10px;
   }
@@ -101,8 +102,8 @@ transition: 0.3s;
 }
 
 @media (max-width: 480px) {
-  h1 {
-    font-size: 32px;
+  .text-section h1 {
+    font-size: 34px;
     letter-spacing: 5px;
   }
 

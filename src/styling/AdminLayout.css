@@ -1,0 +1,13 @@
+.admin-layout-main {
+  flex-grow: 1;
+  padding: 1.5rem; /* equivalent to p-6 */
+  transition: margin-left 0.3s ease;
+}
+
+.admin-layout-main.collapsed {
+  margin-left: 80px; /* sidebar collapsed width */
+}
+
+.admin-layout-main.expanded {
+  margin-left: 256px; /* sidebar expanded width */
+}

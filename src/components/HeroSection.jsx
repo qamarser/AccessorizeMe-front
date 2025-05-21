@@ -1,8 +1,12 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "../styling/Home.css";
+import Button from "./Button";
 
-const KittyGoHeadset = () => {
+const KittyGoHeadset = () =>
+{
+  const navigate = useNavigate();
+  
   return (
     <div className="container-hero-section">
       <div className="text-section">
@@ -15,11 +19,17 @@ const KittyGoHeadset = () => {
           perfect for gaming <br />
           and listening
         </p>
-          </div>
-          
-      <Link to="/shop" className="shop-button">
+      </div>
+
+      {/* <Link to="/shop" className="shop-button">
         Shop Now
-      </Link>
+      </Link> */}
+
+      <Button
+        className="shop-button"
+        onClick={() => navigate("/shop")}
+        text="Shop Now"
+      />
 
       <div className="image-section">
         <img src="/Group 126.png" alt="Kitty Go Headset" />

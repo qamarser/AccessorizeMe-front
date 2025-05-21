@@ -21,9 +21,9 @@ const BestSellers = () => {
   }
 
   return (
-    <div className="p-4">
-      <h2 className="text-2xl font-semibold mb-4">Best Sellers</h2>
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+    <div className="best-sellers-container">
+      <h2 className="best-sellers-heading">Best Sellers</h2>
+      <div className="best-sellers-grid">
         {bestSellers.map((product) => (
           <ProductCard key={product.id} product={product} />
         ))}

@@ -23,6 +23,7 @@ export default function ProductDetails() {
   const [adding, setAdding] = useState(false);
   const [colorImages, setColorImages] = useState([]);
   const [thumbnailImages, setThumbnailImages] = useState([]);
+  const [allThumbnails, setAllThumbnails] = useState([]);
   const { isAuthenticated } = useAuth();
 
   const renderStars = (rating) => {
@@ -47,34 +48,78 @@ export default function ProductDetails() {
     return stars;
   };
 
+  // useEffect(() => {
+  //   const fetchProduct = async () => {
+  //     setLoading(true);
+  //     try {
+  //       const res = await fetchProductById(id);
+  //       console.log("ProductColors:", res?.ProductColors);
+  //       setProduct(res);
+  //       if (res.ProductColors?.length) {
+  //         setSelectedColor(res.ProductColors[0]);
+  //         if (
+  //           res.ProductColors[0] &&
+  //           res.ProductColors[0].Images &&
+  //           res.ProductColors[0].Images.length > 0
+  //         ) {
+  //           // setSelectedImage( res.ProductColors[0].Images[0]?.image_url || null );
+  //           // // alert(res.ProductColors[0].Images[0]?.image_url);
+  //           // setColorImages(res.ProductColors[0].Images);
+  //           setSelectedImage(res.ProductColors[0].Images[0]?.image_url || null);
+  //           setColorImages(res.ProductColors[0].Images);
+  //           setThumbnailImages(res.ProductColors[0].Images);
+  //         }
+  //       }
+  //       // else if ( res.Images && res.Images.length > 0 )
+  //       // {
+  //       //   setSelectedImage(res.Images[0].image_url);
+  //       //   setColorImages([]);
+  //       //   alert(res.Images[0].image_url);
+  //       // }
+  //       // console.log("Fetched product:", res);
+  //       // console.log(
+  //       //   "Selected color after fetch:",
+  //       //   res.ProductColors ? res.ProductColors[0] : null
+  //       // );
+  //       // Do not set main images in thumbnailImages to avoid duplication
+  //       // setThumbnailImages([]);
+  //     } catch (err) {
+  //       toast.error("Failed to load product");
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+  //   fetchProduct();
+  // }, [id]);
+
   useEffect(() => {
     const fetchProduct = async () => {
       setLoading(true);
       try {
         const res = await fetchProductById(id);
-        console.log("ProductColors:", res?.ProductColors);
         setProduct(res);
+
+        if (res.Images && res.Images.length > 0) {
+          setSelectedImage(res.Images[0].image_url);
+        }
+
         if (res.ProductColors?.length) {
           setSelectedColor(res.ProductColors[0]);
-          if (
-            res.ProductColors[0] &&
-            res.ProductColors[0].Images &&
-            res.ProductColors[0].Images.length > 0
-          ) {
-            setSelectedImage(res.ProductColors[0].Images[0]?.image_url || null);
-            setColorImages(res.ProductColors[0].Images);
-          }
-        } else if (res.Images && res.Images.length > 0) {
-          setSelectedImage(res.Images[0].image_url);
-          setColorImages([]);
         }
-        // console.log("Fetched product:", res);
-        // console.log(
-        //   "Selected color after fetch:",
-        //   res.ProductColors ? res.ProductColors[0] : null
-        // );
-        // Do not set main images in thumbnailImages to avoid duplication
-        setThumbnailImages([]);
+
+        // Combine all images from product.Images and all ProductColors' images
+        let combinedImages = [];
+        if (res.Images) {
+          combinedImages = [...res.Images];
+        }
+        if (res.ProductColors) {
+          res.ProductColors.forEach((color) => {
+            if (color.Images) {
+              combinedImages = combinedImages.concat(color.Images);
+            }
+          });
+        }
+        setAllThumbnails(combinedImages);
       } catch (err) {
         toast.error("Failed to load product");
       } finally {
@@ -84,40 +129,27 @@ export default function ProductDetails() {
     fetchProduct();
   }, [id]);
 
-  useEffect(() => {
-    if (!selectedColor || !product?.Images) return;
-
-    const colorImages = product.Images.filter(
-      (img) =>
-        img.related_type === "productColor" &&
-        img.related_id === selectedColor.id
-    );
-    if (colorImages.length > 0) {
-      setSelectedImage(colorImages[0].image_url);
-      setThumbnailImages(colorImages);
-    } else {
-      setSelectedImage(product.Images[0].image_url);
-      setThumbnailImages([]);
-    }
-  }, [selectedColor, product]);
-
   const handleColorSelect = (color) => {
     setSelectedColor(color);
     if (color.Images && color.Images.length > 0) {
-      setThumbnailImages(color.Images);
-    } else {
-      setThumbnailImages(product?.Images || []);
+      // On color select, only update main image to first image of selected color
+      setSelectedImage(color.Images[0].image_url);
     }
   };
 
-  const handleAddToCart = async () => {
+  const handleAddToCart = async (colorId) => {
     if (!isAuthenticated) {
       navigate("/login");
       return;
     }
     try {
       setAdding(true);
-      await addToCart(product.id, 1);
+      if (colorId) {
+        await addToCart(product.id, 1, null, colorId);
+      } else {
+        await addToCart(product.id, 1);
+      }
+      // alert("Product added to cart "+ product.id + " colorId: " + colorId);
       await refreshCart();
       toast.success("Product added");
     } catch (error) {
@@ -151,31 +183,18 @@ export default function ProductDetails() {
       <ToastContainer />
       <div className="flex flex-col items-center gap-4">
         <div className="product-thumbnails">
-          {product?.Images?.map((img, idx) => (
+          {allThumbnails.map((img, idx) => (
             <img
-              key={`main-${idx}`}
+              key={`combined-thumb-${idx}`}
               src={img.image_url}
-              alt={`main-thumb-${idx}`}
-              className="product-thumbnail-img main-thumb"
-              onClick={() => {
-                if (selectedImage !== img.image_url) {
-                  setSelectedImage(img.image_url);
-                }
-              }}
-              title="Main product image"
-            />
-          ))}
-          {thumbnailImages.map((img, idx) => (
-            <img
-              key={`thumb-${idx}`}
-              src={img.image_url}
-              alt={`thumb-${idx}`}
+              alt={`combined-thumb-${idx}`}
               className="product-thumbnail-img"
               onClick={() => {
                 if (selectedImage !== img.image_url) {
                   setSelectedImage(img.image_url);
                 }
               }}
+              title="Product thumbnail image"
             />
           ))}
         </div>
@@ -226,7 +245,9 @@ export default function ProductDetails() {
         <div className="action-buttons">
           <button
             className="action-button add-to-cart"
-            onClick={handleAddToCart}
+            onClick={() =>
+              handleAddToCart(selectedColor ? selectedColor.id : null)
+            }
             disabled={adding || product.stock === 0}
           >
             {adding ? "Adding..." : "Add to Cart"}

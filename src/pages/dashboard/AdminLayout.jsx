@@ -1,9 +1,13 @@
 import React, { useState } from "react";
 import Sidebar_admin from "../../components/Sidebar_admin";
+import '../../styling/AdminLayout.css';
 
 const AdminLayout = ({ children }) => {
+  // Forcibly set sidebarCollapsed to false to test expanded sidebar
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [activeTab, setActiveTab] = useState("");
+
+  // console.log("sidebarCollapsed state:", sidebarCollapsed);
 
   const toggleSidebar = () => {
     setSidebarCollapsed(!sidebarCollapsed);
@@ -18,7 +22,7 @@ const AdminLayout = ({ children }) => {
         darkMode={false}
         toggleSidebar={toggleSidebar}
       />
-      <main className={`flex-grow p-6 transition-all duration-300 ${sidebarCollapsed ? "ml-20" : "ml-64"}`}>
+      <main className={`admin-layout-main ${sidebarCollapsed ? "collapsed" : "expanded"}`}>
         {children}
       </main>
     </div>

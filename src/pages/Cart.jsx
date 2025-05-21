@@ -59,10 +59,30 @@ export default function Cart() {
       <h2>Your Cart</h2>
       <ul>
         {cart.map((item) => {
-          console.log("Cart item:", item); // Debug log to inspect cart item structure
+          // console.log("Cart item:", item); // Debug log to inspect cart item structure
           const product = item.Product;
           let imageUrl = "";
-          if (item.ProductVariant && item.ProductVariant.Images && item.ProductVariant.Images.length > 0) {
+          if (
+            item.ProductVariant &&
+            item.ProductVariant.ProductColor &&
+            item.ProductVariant.ProductColor.Images &&
+            item.ProductVariant.ProductColor.Images.length > 0
+          ) {
+            imageUrl = getImageUrl(
+              item.ProductVariant.ProductColor.Images[0].image_url
+            );
+          } else if (
+            item.product_color_id &&
+            item.ProductColor &&
+            item.ProductColor.Images &&
+            item.ProductColor.Images.length > 0
+          ) {
+            imageUrl = getImageUrl(item.ProductColor.Images[0].image_url);
+          } else if (
+            item.ProductVariant &&
+            item.ProductVariant.Images &&
+            item.ProductVariant.Images.length > 0
+          ) {
             imageUrl = getImageUrl(item.ProductVariant.Images[0].image_url);
           } else if (product) {
             if (product.image_url) {
@@ -81,9 +101,11 @@ export default function Cart() {
                 />
               )}
               <div>
-                <p className="font-semibold">{product ? product.name : "Unknown Product"}</p>
+                <p className="font-semibold">
+                  {product ? product.name : "Unknown Product"}
+                </p>
                 <p>
-                  Quantity: 
+                  Quantity:
                   <button onClick={() => handleDecrement(item)}>-</button>
                   {item.quantity}
                   <button onClick={() => handleIncrement(item)}>+</button>
@@ -95,12 +117,8 @@ export default function Cart() {
           );
         })}
       </ul>
-      <div>
-        Total Amount: ${totalAmount.toFixed(2)}
-      </div>
-      <button onClick={handleCheckout}>
-        Checkout
-      </button>
+      <div>Total Amount: ${totalAmount.toFixed(2)}</div>
+      <button onClick={handleCheckout}>Checkout</button>
     </div>
   );
 }

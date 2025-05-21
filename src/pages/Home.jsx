@@ -4,6 +4,7 @@ import { fetchAllCategories } from "../api/categoryApi";
 import CategoryList from "../components/CategoryList";
 import HeroSection from "../components/HeroSection";
 import BestSellers from "../components/BestSellers";
+import Button from "../components/Button"
 function Home() {
   const [categories, setCategories] = useState([]);
   const [products, setProducts] = useState([]);
@@ -34,10 +35,16 @@ function Home() {
         categories={categories}
         onSelectCategory={handleCategoryClick}
       />
-      <button
+      {/* <button
         className="btn-view-more"
-        onClick={() => navigate( "/shop" )}>view more</button>
-      
+        onClick={() => navigate( "/shop" )}>view more</button> */}
+      <div className="view-more-container">
+        <Button
+          className="contact-button"
+          onClick={() => navigate( "/shop" )}
+          text="View More"
+        />
+      </div>
       <BestSellers />
     </div>
   );

@@ -46,10 +46,10 @@ a {
 
 /*=============== HEADER ===============*/
 .navbar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
+  /* position: fixed; */
+  /* top: 0; */
+  /* left: 0; */
+  /* width: 100%; */
   background-color: var(--body-color);
   box-shadow: 0 2px 16px hsla(230, 75%, 32%, 0.15);
   /* z-index: var(--z-fixed); */
@@ -68,7 +68,7 @@ a {
 
 /*=============== LOGO ===============*/
 .nav-logo {
-  height: 40px;
+  height: 61px;
   cursor: pointer;
   transition: transform 0.3s;
 }

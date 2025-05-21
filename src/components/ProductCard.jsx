@@ -1,97 +1,3 @@
-// // import React from "react";
-
-// // const BASE_URL = import.meta.env.VITE_API_BASE_URL || "";
-
-// // export default function ProductCard({ product }) {
-// //   const imageUrl =
-// //     product.Images && product.Images.length > 0
-// //       ? product.Images[0].image_url.startsWith("http")
-// //         ? product.Images[0].image_url
-// //         : `${BASE_URL}${product.Images[0].image_url}`
-// //       : "/placeholder.png";
-
-// //   return (
-// //     <div className="border rounded-xl p-4 shadow hover:shadow-md transition">
-// //       <img
-// //         src={imageUrl}
-// //         alt={product.name}
-// //         className="w-36 h-36 object-cover rounded-md mb-2"
-// //       />
-// //       <h3 className="text-md font-semibold">{product.name}</h3>
-// //       <p className="text-sm text-gray-500">{product.category?.name}</p>
-// //           <p className="text-blue-600 font-bold mt-1">${product.price}</p>
-          
-// //     </div>
-// //   );
-// // }
-
-
-// // import { useNavigate } from "react-router-dom";
-
-// // const BASE_URL = import.meta.env.VITE_API_BASE_URL || "";
-
-// // export default function ProductCard({ product }) {
-// //   let imageUrl = "/placeholder.png";
-
-// //   // Use image_url from product if available, else fallback to Images array
-// //   if (product.image_url) {
-// //     imageUrl = product.image_url.startsWith("http")
-// //       ? product.image_url
-// //       : `${BASE_URL}${product.image_url}`;
-// //   } else if (product.Images?.length > 0) {
-// //     const rawUrl = product.Images[0].image_url;
-// //     imageUrl = rawUrl?.startsWith("http") ? rawUrl : `${BASE_URL}${rawUrl}`;
-// //   }
-
-// //   console.log("Final image URL:", imageUrl); // DEBUG
-
-// //   const navigate = useNavigate();
-
-// //   return (
-// //     <div
-// //       className="border rounded-xl p-4 shadow hover:shadow-md transition cursor-pointer"
-// //       onClick={() => {
-// //         if (product.category?.id) {
-// //           navigate(`/shop/categorie/${product.category.id}/product/${product.id}`);
-// //         } else {
-// //           navigate(`/product/${product.id}`);
-// //         }
-// //       }}
-// //     >
-// //       <img
-// //         src={imageUrl}
-// //         alt={product.name}
-// //         className="w-36 h-36 object-cover rounded-md mb-2"
-// //       />
-// //       <h3 className="text-md font-semibold">{product.name}</h3>
-// //       <p className="text-sm text-gray-500">{product.category?.name}</p>
-// //       <p className="text-blue-600 font-bold mt-1">${product.price}</p>
-// //     </div>
-// //   );
-// // }
-
-
-// import React from "react";
-// import "../styling/ProductCard.css";
-
-// const ProductCard = ({ product }) => {
-//   return (
-//     <div className="product-card">
-//       <img
-//         src={product?.Images?.[0]?.url || "/placeholder.jpg"}
-//         alt={product.name}
-//         className="product-image"
-//       />
-//       <div className="product-info">
-//         <h4>{product.name}</h4>
-//         <p>${product.price}</p>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default ProductCard;
-
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { ShoppingCart, Heart } from "lucide-react";
@@ -138,7 +44,8 @@ const ProductCard = ({ product }) => {
     }
     try {
       // Pass product_variant_id if available, else null
-      const productVariantId = product.product_variant_id || product.variant_id || null;
+      const productVariantId =
+        product.product_variant_id || product.variant_id || null;
       await addToCart(product.id, 1, productVariantId);
       refreshCart();
       toast.success("Product added to cart");

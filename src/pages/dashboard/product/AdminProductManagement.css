@@ -1,0 +1,48 @@
+.data-grid-container {
+  background-color: white !important;
+  color: black;
+  width: 100%;
+  overflow-x: auto;
+}
+
+.data-grid-container .rdg-row:nth-child(odd) {
+  background-color: white;
+  color: black;
+}
+
+.data-grid-container .rdg-row:nth-child(even) {
+  background-color: #f0f0f0; /* light grey */
+  color: black;
+}
+
+.data-grid-container .rdg-row:hover {
+  background-color: #d0d0d0; /* darker grey on hover */
+  color: black;
+}
+
+h1 {
+  font-weight: bold;
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .data-grid-container {
+    font-size: 0.9rem;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .data-grid-container {
+    font-size: 0.8rem;
+  }
+
+  h1 {
+    font-size: 1.2rem;
+  }
+}

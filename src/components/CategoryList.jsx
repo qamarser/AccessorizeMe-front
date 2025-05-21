@@ -46,9 +46,14 @@ const CategoryList = ({ categories: propCategories, onSelectCategory }) => {
               key={cat.id}
               className="category item"
               onClick={() => onSelectCategory(cat.id)}
+              style={{
+                backgroundImage: `url(${cat.background_image_url})`,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+                backgroundRepeat: "no-repeat",
+              }}
             >
               <label>{cat.name}</label>
-              <img src={cat.background_image_url} alt={cat.name} />
             </li>
           ))
         ) : (

@@ -13,7 +13,6 @@ import Cart from "./pages/Cart";
 import Wishlist from "./pages/wishlist";
 import ShippingPage from './pages/Shipping'
 import CustomerOrders from './pages/CustomerOrders'
-import AuthForm from './pages/AuthForm'
 import UserProfile from './pages/UserProfile'
 
 // admin pages
@@ -61,7 +60,6 @@ function App()
               <Route path="/wishlist" element={<Wishlist />} />
               <Route path="/shipping" element={<ShippingPage />} />
               <Route path="/orders" element={<CustomerOrders />} />
-              <Route path="/login" element={<AuthForm />} />
               <Route path="/profile" element={<UserProfile />} />
 
               {/* Admin routes */}

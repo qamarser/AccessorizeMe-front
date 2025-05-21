@@ -38,7 +38,7 @@ const CustomerOrders = () => {
               <th>Created At</th>
               <th>Shipping Address</th>
               <th>Payment Method</th>
-              <th>Payment Status</th>
+              {/* <th>Payment Status</th> */}
               <th>Order Items</th>
             </tr>
           </thead>
@@ -62,7 +62,7 @@ const CustomerOrders = () => {
                     : "N/A"}
                 </td>
                 <td>{order.Payment ? order.Payment.payment_method : "N/A"}</td>
-                <td>{order.Payment ? order.Payment.status : "N/A"}</td>
+                {/* <td>{order.Payment ? order.Payment.status : "N/A"}</td> */}
                 <td>
                   <ul>
                     {order.OrderItems && order.OrderItems.length > 0 ? (

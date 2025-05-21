@@ -1,4 +1,4 @@
-.contact-button {
+.base-button {
   background-color: #0b0b3b;
   color: white;
   padding: 0.75rem 2rem;
@@ -9,6 +9,14 @@
   transition: background-color 0.3s ease;
 }
 
-.contact-button:hover {
+.base-button:hover {
   background-color: #1c1c5a;
 }
+
+/* .contact-button {
+  /* Additional or overriding styles for contact-button */
+/* } */
+
+/* .shop-button { */
+  /* Additional or overriding styles for shop-button */
+/* }  */

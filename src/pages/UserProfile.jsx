@@ -161,6 +161,7 @@ import {
 import "../styling/UserProfile.css";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import CustomerOrders from "./CustomerOrders";
 
 const UserProfile = () => {
   const [user, setUser] = useState(null);
@@ -245,6 +246,7 @@ const UserProfile = () => {
   if (!user) return <p>Loading...</p>;
 
   return (
+    <div className="user-profile-container">
     <div className="profile-card">
       <div className="profile-header">
         <div className="profile-img-wrapper">
@@ -358,6 +360,8 @@ const UserProfile = () => {
           </button>
         </div>
       )}
+      </div>
+      <CustomerOrders />
     </div>
   );
 };
