@@ -158,7 +158,7 @@ const fetchData = async () => {
   key: "image",
   name: "Image",
   resizable: true,
-  formatter: ({ row }) => {
+  renderCell: ({ row }) => {
     // Use first image from Images array if available, else fallback to row.image_url
     const imageUrl =
       (row.Images && row.Images.length > 0 && row.Images[0].image_url) ||
@@ -183,7 +183,7 @@ const fetchData = async () => {
       key: "colors",
       name: "Colors",
       resizable: true,
-      formatter: ({ row }) => {
+      renderCell: ({ row }) => {
         const productColors = colors.filter((c) => c.product_id === row.id);
         return (
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
@@ -234,7 +234,8 @@ const fetchData = async () => {
       name: "Actions",
       width: 100,
       resizable: false,
-      formatter: (props) => (
+      
+      renderCell: (props) => (
         <ActionsFormatter
           row={props.row}
           onEdit={handleEdit}
@@ -318,25 +319,26 @@ const fetchData = async () => {
             </select>
           </div>
           <div className="data-grid-container" style={{ width: "100%" }}>
-          <DataGrid
-            columns={columns}
-            rows={currentRows.map((row, index) => ({
-              ...row,
-              count: (currentPage - 1) * pageSize + index + 1,
-            }))}
-            rowKeyGetter={(row) => row.id}
-            editMode="row"
-            onRowsChange={async (rows, data) => {
-              const updatedRow = rows[data.index];
-              try {
-                await updateProduct(updatedRow.id, updatedRow);
-                toast.success(`Product ${updatedRow.name} updated`);
-                setProducts(rows);
-              } catch (error) {
-                toast.error("Failed to update product");
-              }
-            }}
-          />
+            <DataGrid
+              className="rdg-light"
+              columns={columns}
+              rows={currentRows.map((row, index) => ({
+                ...row,
+                count: (currentPage - 1) * pageSize + index + 1,
+              }))}
+              rowKeyGetter={(row) => row.id}
+              editMode="row"
+              onRowsChange={async (rows, data) => {
+                const updatedRow = rows[data.index];
+                try {
+                  await updateProduct(updatedRow.id, updatedRow);
+                  toast.success(`Product ${updatedRow.name} updated`);
+                  setProducts(rows);
+                } catch (error) {
+                  toast.error("Failed to update product");
+                }
+              }}
+            />
           </div>
           <div
             style={{
