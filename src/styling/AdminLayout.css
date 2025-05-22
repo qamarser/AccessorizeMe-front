@@ -11,3 +11,13 @@
 .admin-layout-main.expanded {
   margin-left: 256px; /* sidebar expanded width */
 }
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .admin-layout-main {
+    margin-left: 0 !important;
+    padding: 1rem;
+    width: 100%;
+    overflow-x: hidden;
+  }
+}

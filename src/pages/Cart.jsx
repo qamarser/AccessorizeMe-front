@@ -2,7 +2,8 @@ import React from "react";
 import { useCart } from "../context/CartContext";
 import { updateCartItem, deleteCartItem } from "../api/cart";
 import { useNavigate } from "react-router-dom";
-
+import "../styling/Cart.css";
+import Button from "../components/Button"; 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL || "";
 
 function getImageUrl(url) {
@@ -55,8 +56,8 @@ export default function Cart() {
   if (!cart || cart.length === 0) return <p>Your cart is empty.</p>;
 
   return (
-    <div className="p-6">
-      <h2>Your Cart</h2>
+    <div className="cart-container">
+      <h2 class="cart-title" >Your Cart</h2>
       <ul>
         {cart.map((item) => {
           // console.log("Cart item:", item); // Debug log to inspect cart item structure
@@ -92,33 +93,74 @@ export default function Cart() {
             }
           }
           return (
-            <li key={item.id} className="flex items-center space-x-4 mb-4">
-              {imageUrl && (
-                <img
-                  src={imageUrl}
-                  alt={product ? product.name : "Product image"}
-                  className="w-20 h-20 object-cover rounded"
-                />
-              )}
-              <div>
-                <p className="font-semibold">
-                  {product ? product.name : "Unknown Product"}
-                </p>
-                <p>
+            <li key={item.id} class="cart-item">
+              <div class="cart-item-info">
+                {imageUrl && (
+                  <img
+                    src={imageUrl}
+                    alt={product ? product.name : "Product image"}
+                    className="cart-image"
+                  />
+                )}
+                <div>
+                  <p class="cart-product-name">
+                    {product ? product.name : "Unknown Product"}
+                  </p>
+                  {/* <p >
                   Quantity:
                   <button onClick={() => handleDecrement(item)}>-</button>
                   {item.quantity}
                   <button onClick={() => handleIncrement(item)}>+</button>
-                </p>
-                <p>Price: ${product ? product.price : "N/A"}</p>
-                <button onClick={() => handleDelete(item)}>Remove</button>
+                </p> */}
+                  <p class="cart-product-price">
+                    Price: ${product ? product.price : "N/A"}
+                  </p>
+                </div>
+
+                {/* <button onClick={() => handleDelete(item)}>Remove</button> */}
+              </div>
+              <div class="cart-actions">
+                {/* <button onclick="handleDecrement(item)" class="cart-btn">
+                  -
+                </button>
+                <span class="cart-quantity">{item.quantity}</span>
+                <button onclick="handleIncrement(item)" class="cart-btn">
+                  +
+                </button> */}
+                {/* <p class="cart-btn"> */}
+                <button onClick={() => handleDecrement(item)} class="cart-btn">
+                  -
+                </button>
+                <span class="cart-quantity">{item.quantity}</span>
+                <button onClick={() => handleIncrement(item)} class="cart-btn">
+                  +
+                </button>
+                {/* </p> */}
+                <button
+                  onClick={() => handleDelete(item)}
+                  class="cart-remove-btn"
+                >
+                  Remove
+                </button>
               </div>
             </li>
           );
         })}
       </ul>
-      <div>Total Amount: ${totalAmount.toFixed(2)}</div>
-      <button onClick={handleCheckout}>Checkout</button>
+      
+      <div class="cart-footer">
+      <p class="cart-total">Total: ${totalAmount.toFixed(2)}</p>
+        {/* <button onClick={handleCheckout} class="cart-checkout-btn">Checkout</button> */}
+        <Button
+          text="Checkout"
+          onClick={handleCheckout}
+          className="cart-checkout-btn"
+        />
+        <Button
+          text="Continue Shopping"
+          onClick={() => navigate("/shop")}
+          className="cart-continue-shopping-btn"/>
+    </div>
     </div>
   );
 }

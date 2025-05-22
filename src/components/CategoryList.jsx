@@ -2,7 +2,11 @@ import React, { useEffect, useState } from "react";
 import { fetchAllCategories } from "../api/categoryApi";
 import "../styling/CategoryList.css";
 
-const CategoryList = ({ categories: propCategories, onSelectCategory }) => {
+const CategoryList = ({
+  categories: propCategories,
+  onSelectCategory,
+  layout = "horizontal",
+}) => {
   const [categories, setCategories] = useState(propCategories || []);
   const [loading, setLoading] = useState(!propCategories);
 
@@ -37,9 +41,9 @@ const CategoryList = ({ categories: propCategories, onSelectCategory }) => {
   if (loading) return <div>Loading categories...</div>;
 
   return (
-    <div className="container-category-list">
+    <div className={`container-category-list ${layout}`}>
       <h2>Categories</h2>
-      <ul className="category-list">
+      <ul className={`category-list ${layout}`}>
         {categories.length > 0 ? (
           categories.map((cat) => (
             <li

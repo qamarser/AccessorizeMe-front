@@ -17,6 +17,8 @@ import {
   deleteVariant,
 } from "../../api/productApiExtended";
 
+import { BASE_URL } from "../../api/axiosInstance";
+
 const AdminProductManagement = () => {
   const [products, setProducts] = useState([]);
   const [colors, setColors] = useState([]);
@@ -215,12 +217,40 @@ const AdminProductManagement = () => {
 
   // Columns for tables
   const productColumns = [
+    {
+      header: "Image",
+      accessor: "image",
+      render: (product) => {
+        const imageUrl =
+          product.image_url ||
+          (product.Images && product.Images.length > 0 && product.Images[0].image_url) ||
+          "";
+        const altText =
+          product.alt_text ||
+          (product.Images && product.Images.length > 0 && product.Images[0].alt_text) ||
+          product.name;
+
+        const getImageUrl = (url) => {
+          if (!url) return "";
+          if (url.startsWith("http") || url.startsWith("https")) {
+            return url;
+          }
+          return `${BASE_URL}${url}`;
+        };
+
+        if (!imageUrl) return null;
+
+        return (
+          <img
+            src={getImageUrl(imageUrl)}
+            alt={altText}
+            style={{ width: "50px", height: "50px", objectFit: "cover", borderRadius: "4px" }}
+          />
+        );
+      },
+    },
     { header: "ID", accessor: "id" },
     { header: "Name", accessor: "name" },
-    { header: "Description", accessor: "description" },
-    { header: "Price", accessor: "price" },
-    { header: "Stock", accessor: "stock" },
-    { header: "Category", accessor: "category_name" },
   ];
 
   const colorColumns = [

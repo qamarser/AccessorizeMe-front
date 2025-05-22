@@ -48,50 +48,6 @@ export default function ProductDetails() {
     return stars;
   };
 
-  // useEffect(() => {
-  //   const fetchProduct = async () => {
-  //     setLoading(true);
-  //     try {
-  //       const res = await fetchProductById(id);
-  //       console.log("ProductColors:", res?.ProductColors);
-  //       setProduct(res);
-  //       if (res.ProductColors?.length) {
-  //         setSelectedColor(res.ProductColors[0]);
-  //         if (
-  //           res.ProductColors[0] &&
-  //           res.ProductColors[0].Images &&
-  //           res.ProductColors[0].Images.length > 0
-  //         ) {
-  //           // setSelectedImage( res.ProductColors[0].Images[0]?.image_url || null );
-  //           // // alert(res.ProductColors[0].Images[0]?.image_url);
-  //           // setColorImages(res.ProductColors[0].Images);
-  //           setSelectedImage(res.ProductColors[0].Images[0]?.image_url || null);
-  //           setColorImages(res.ProductColors[0].Images);
-  //           setThumbnailImages(res.ProductColors[0].Images);
-  //         }
-  //       }
-  //       // else if ( res.Images && res.Images.length > 0 )
-  //       // {
-  //       //   setSelectedImage(res.Images[0].image_url);
-  //       //   setColorImages([]);
-  //       //   alert(res.Images[0].image_url);
-  //       // }
-  //       // console.log("Fetched product:", res);
-  //       // console.log(
-  //       //   "Selected color after fetch:",
-  //       //   res.ProductColors ? res.ProductColors[0] : null
-  //       // );
-  //       // Do not set main images in thumbnailImages to avoid duplication
-  //       // setThumbnailImages([]);
-  //     } catch (err) {
-  //       toast.error("Failed to load product");
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-  //   fetchProduct();
-  // }, [id]);
-
   useEffect(() => {
     const fetchProduct = async () => {
       setLoading(true);
@@ -138,18 +94,29 @@ export default function ProductDetails() {
   };
 
   const handleAddToCart = async (colorId) => {
+    // console.log("handleAddToCart called with selectedImage:", selectedImage);
     if (!isAuthenticated) {
       navigate("/login");
       return;
     }
+    let matchedColorId = null;
+    if (product?.ProductColors) {
+      for (const color of product.ProductColors) {
+        if (color.Images) {
+          const match = color.Images.find(
+            (img) => img.image_url === selectedImage
+          );
+          if (match) {
+            matchedColorId = color.id;
+            break;
+          }
+        }
+      }
+    }
+
     try {
       setAdding(true);
-      if (colorId) {
-        await addToCart(product.id, 1, null, colorId);
-      } else {
-        await addToCart(product.id, 1);
-      }
-      // alert("Product added to cart "+ product.id + " colorId: " + colorId);
+      await addToCart(product.id, 1, null, matchedColorId);
       await refreshCart();
       toast.success("Product added");
     } catch (error) {
@@ -181,7 +148,7 @@ export default function ProductDetails() {
   return (
     <div className="product-details-container">
       <ToastContainer />
-      <div className="flex flex-col items-center gap-4">
+      <div className="product-images-container">
         <div className="product-thumbnails">
           {allThumbnails.map((img, idx) => (
             <img
@@ -209,19 +176,19 @@ export default function ProductDetails() {
       {/* Right: Info */}
       <div className="product-info">
         <h2>{product.name}</h2>
+        <p className="product-price">${product.price}</p>
+        <p className="product-description">{product.description}</p>
+
         <div className="rating-container">
           {product.averageRating > 0 ? (
             <>
-              <div className="flex">{renderStars(product.averageRating)}</div>
-              <span className="rating-text">({product.averageRating} / 5)</span>
+              <div className="">{renderStars(product.averageRating)}</div>
+              <span className="">({product.averageRating} / 5)</span>
             </>
           ) : (
             <span className="no-ratings">No ratings yet</span>
           )}
         </div>
-
-        <p className="product-price">${product.price}</p>
-        <p className="product-description">{product.description}</p>
 
         <div className="color-selector">
           {product.ProductColors?.map((color, idx) => (
@@ -245,9 +212,7 @@ export default function ProductDetails() {
         <div className="action-buttons">
           <button
             className="action-button add-to-cart"
-            onClick={() =>
-              handleAddToCart(selectedColor ? selectedColor.id : null)
-            }
+            onClick={handleAddToCart}
             disabled={adding || product.stock === 0}
           >
             {adding ? "Adding..." : "Add to Cart"}
@@ -259,8 +224,11 @@ export default function ProductDetails() {
             Add to Wishlist
           </button>
         </div>
+
+        <div className="product-reviews-container">
+          <ProductReviews productId={product.id} />
+        </div>
       </div>
-      <ProductReviews productId={product.id} />
     </div>
   );
 }

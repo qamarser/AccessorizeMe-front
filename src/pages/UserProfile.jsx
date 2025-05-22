@@ -162,6 +162,7 @@ import "../styling/UserProfile.css";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import CustomerOrders from "./CustomerOrders";
+import Button from "../components/Button";
 
 const UserProfile = () => {
   const [user, setUser] = useState(null);
@@ -209,6 +210,10 @@ const UserProfile = () => {
     if (!imageFile) return alert("No image selected");
     try {
       const updated = await uploadProfileImage(imageFile);
+      // Append timestamp to profileImage URL to avoid browser caching
+      if (updated.profileImage) {
+        updated.profileImage = updated.profileImage + "?t=" + new Date().getTime();
+      }
       setUser(updated);
       setImageFile(null);
       alert("Image uploaded!");
@@ -339,9 +344,10 @@ const UserProfile = () => {
 
       {editMode && (
         <div className="profile-footer">
-          <button className="save-btn" onClick={handleSave}>
+          {/* <button className="save-btn" onClick={handleSave}>
             Save Change
-          </button>
+          </button> */}
+            <Button className="save-btn" onClick={handleSave} text="Save Change" />
           {imageFile && (
             <button className="upload-btn" onClick={handleImageUpload}>
               Upload Image

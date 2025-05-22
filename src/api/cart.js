@@ -2,10 +2,10 @@
 import axiosInstance from "./axiosInstance";
 
 // Add to cart
-export const addToCart = async (product_id, quantity, product_variant_id = null, product_color_id = null) => {
+export const addToCart = async (product_id, quantity, product_variant_id = null, product_color_id = null, selectedImageUrl = null) => {
   const response = await axiosInstance.post(
     "/api/cart/add",
-    { product_id, quantity, product_variant_id, product_color_id },
+    { product_id, quantity, product_variant_id, product_color_id, selectedImageUrl },
     { withCredentials: true }
   );
   console.log("Add to cart response:", response.data);

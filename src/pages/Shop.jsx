@@ -81,7 +81,7 @@ const Shop = () => {
 
     setPage(pageParam);
     setSortBy(sortByParam);
-    setSortOrder( sortOrderParam );
+    setSortOrder(sortOrderParam);
     setSearchInput(search);
   }, [location.search]);
 
@@ -201,11 +201,11 @@ const Shop = () => {
       {/* Sidebar */}
       <aside className="sidebar_shop">
         <h2>Our Categories</h2>
-        <ul className="category-list">
+        <ul className="shop-category-list">
           {categories.map((cat) => (
             <li
               key={cat.id}
-              className={`category-item ${
+              className={`shop-category-item ${
                 filters.categoryId === cat.id ? "selected" : ""
               }`}
               onClick={() => {
@@ -278,50 +278,52 @@ const Shop = () => {
       </aside>
 
       {/* Product Grid */}
-      <main className="product-grid">
-        {loadingProducts ? (
-          <div className="loading-products">Loading products...</div>
-        ) : products.length === 0 ? (
-          <div className="no-products">
-            No products found. Try adjusting your filters.
-          </div>
-        ) : (
-          products.map((product) => {
-            const imageUrl =
-              product.image_url ||
-              (product.Images?.length > 0 && product.Images[0].image_url) ||
-              "";
-            const altText =
-              product.alt_text ||
-              (product.Images?.length > 0 && product.Images[0].alt_text) ||
-              product.name;
+      <div className="products-section">
+        <main className="product-grid">
+          {loadingProducts ? (
+            <div className="loading-products">Loading products...</div>
+          ) : products.length === 0 ? (
+            <div className="no-products">
+              No products found. Try adjusting your filters.
+            </div>
+          ) : (
+            products.map((product) => {
+              const imageUrl =
+                product.image_url ||
+                (product.Images?.length > 0 && product.Images[0].image_url) ||
+                "";
+              const altText =
+                product.alt_text ||
+                (product.Images?.length > 0 && product.Images[0].alt_text) ||
+                product.name;
 
-            return (
-              <ProductCard
-                key={product.id}
-                product={product}
-                imageUrl={getImageUrl(imageUrl)}
-                altText={altText}
-                onAddToCart={handleAddToCart}
-                onAddToWishlist={handleAddToWishlist}
-              />
-            );
-          })
-        )}
-      </main>
+              return (
+                <ProductCard
+                  key={product.id}
+                  product={product}
+                  imageUrl={getImageUrl(imageUrl)}
+                  altText={altText}
+                  onAddToCart={handleAddToCart}
+                  onAddToWishlist={handleAddToWishlist}
+                />
+              );
+            })
+          )}
+        </main>
 
-      {/* Pagination Controls */}
-      <div className="pagination-controls">
-        <button onClick={handlePrevPage} disabled={page === 1}>
-          Previous
-        </button>
-        <span>Page {page}</span>
-        <button onClick={handleNextPage} disabled={page === totalPages}>
-          Next
-        </button>
-        <span>
-          Page {page} of {totalPages}
-        </span>
+        {/* Pagination Controls */}
+        <div className="pagination-controls">
+          <button onClick={handlePrevPage} disabled={page === 1}>
+            Previous
+          </button>
+          <span>Page {page}</span>
+          <button onClick={handleNextPage} disabled={page === totalPages}>
+            Next
+          </button>
+          <span>
+            Page {page} of {totalPages}
+          </span>
+        </div>
       </div>
     </div>
   );

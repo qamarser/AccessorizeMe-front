@@ -8,6 +8,7 @@ import {
 import { addToCart } from "../api/cart";
 import { useCart } from "../context/CartContext";
 import { toast } from "react-toastify";
+import Button from "../components/Button";
 
 export default function Wishlist() {
   const [wishlist, setWishlist] = useState([]);
@@ -89,18 +90,22 @@ export default function Wishlist() {
               <p>Price: ${item.Product.price}</p>
             </div>
             <div >
-              <button
+              {/* <button
                 onClick={() => handleAddToCart(item.Product.id)}
 
               >
                 Add to Cart
-              </button>
+              </button> */}
+              <Button
+                onClick={() => handleAddToCart(item.Product.id)}
+                text="Add to Cart"/>
               <button
                 onClick={() => handleRemoveFromWishlist(item.id)}
 
               >
                 Remove
               </button>
+
             </div>
           </li>
         ))}

@@ -444,12 +444,12 @@ const Navbar = () => {
           >
             Contact
           </button>
-          <button
+          {/* <button
             onClick={() => navigate("/orders")}
             className="nav-link btn-nav"
           >
             Order
-          </button>
+          </button> */}
           {/* <button
             onClick={() => navigate("/profile")}
             className="nav-link btn-nav"

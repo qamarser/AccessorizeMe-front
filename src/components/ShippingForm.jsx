@@ -6,6 +6,8 @@ import { toast } from "react-toastify";
 import { useCart } from "../context/CartContext";
 import { placeOrder } from "../api/orderApi";
 import "../styling/ShippingForm.css";
+import Button from "./Button"; 
+
 export default function ShippingForm() {
   const { refreshCart, clearCart, cart } = useCart();
   const navigate = useNavigate();
@@ -105,13 +107,19 @@ export default function ShippingForm() {
           <span className="select-none">Payment on Delivery</span>
         </label>
 
-        <button
+        {/* <button
           type="submit"
           className="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded transition duration-300"
           onClick={handleSubmit}
         >
           Save Shipping Info
-        </button>
+        </button> */}
+        <Button
+          type="submit"
+          className="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded transition duration-300"
+          onClick={handleSubmit}
+          text="Save Shipping Info"
+        />
       </form>
     </div>
   );

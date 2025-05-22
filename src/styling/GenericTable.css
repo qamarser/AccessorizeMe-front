@@ -1,85 +1,11 @@
-/* .generic-table-container {
-  margin-bottom: 16px;
-}
-
-.generic-table-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16px;
-}
-
-.generic-table-add-button {
-  background: none;
-  border: none;
-  padding: 0;
-  cursor: pointer;
-  color: #007bff;
-}
-
-.generic-table-add-button svg {
-  cursor: pointer;
-  margin-right: 8px;
-  vertical-align: middle;
-  width: 16px;
-  height: 16px;
-  fill: currentColor;
-}
-
-.generic-table {
-  width: 100%;
-  border-collapse: collapse;
-  border: 1px solid #ccc;
-}
-
-.generic-table th,
-.generic-table td {
-  border: 1px solid #ccc;
-  padding: 8px;
-  text-align: left;
-}
-
-.generic-table th {
-  background-color: #f0f0f0;
-}
-
-.generic-table-actions-button {
-  background: none;
-  border: none;
-  padding: 0;
-  cursor: pointer;
-  margin-right: 8px;
-}
-
-.generic-table-actions-button svg {
-  cursor: pointer;
-  vertical-align: middle;
-  width: 16px;
-  height: 16px;
-  fill: currentColor;
-}
-
-.generic-table-actions-button.edit svg {
-  fill: #007bff;
-}
-
-.generic-table-actions-button.delete svg {
-  fill: #dc3545;
-}
-
-.generic-table-row {
-  cursor: default;
-}
-
-.generic-table-no-data {
-  text-align: center;
-  padding: 16px;
-} */
 .generic-table-container {
   margin-bottom: 16px;
   font-family: Arial, sans-serif;
   font-size: 14px;
   color: #333;
+  width: 100%;
+  overflow-x: auto;
+  max-width: 100%;
 }
 
 .generic-table-header {
@@ -87,6 +13,10 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 16px;
+  width: 100%;
+  min-width: 600px; /* Ensure table does not shrink too much */
+  border-collapse: collapse;
+  /* border: 1px solid #ccc; */
 }
 
 .generic-table-add-button {
@@ -110,16 +40,18 @@
   width: 100%;
   border-collapse: collapse;
   border: 1px solid #ccc;
-  table-layout: fixed;
 }
 
 .generic-table th,
 .generic-table td {
   border: 1px solid #ccc;
   padding: 8px 12px;
-  text-align: left;
   vertical-align: middle;
   word-wrap: break-word;
+    text-align: left;
+  white-space: nowrap;
+  white-space: normal;
+  overflow-wrap: break-word;
 }
 
 .generic-table th {
@@ -138,8 +70,8 @@
 .generic-table-actions-button svg {
   cursor: pointer;
   vertical-align: middle;
-  width: 16px;
-  height: 16px;
+  width: 20px;
+  height: 20px;
   fill: currentColor;
 }
 
@@ -164,4 +96,33 @@
   padding: 16px;
   font-style: italic;
   color: #666;
+}
+
+.generic-table td ul,
+.generic-table td ol {
+  padding-left: 20px;
+  margin: 0;
+  list-style-position: inside;
+}
+
+.generic-table td li {
+  white-space: normal;
+  display: list-item;
+}
+
+@media (max-width: 768px) {
+  .generic-table-container {
+    overflow-x: auto; /* Scrollable container */
+    max-width: 100%;
+  }
+
+  .generic-table th,
+  .generic-table td {
+    font-size: 14px; /* Reduce font size slightly */
+  }
+
+  .generic-table-actions-button svg {
+    width: 16px;
+    height: 16px;
+  }
 }
