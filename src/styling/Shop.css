@@ -148,3 +148,146 @@
   padding: 1.25rem 3rem; /* increased padding */
   font-size: 1.25rem; /* increased font size */
 }
+
+/* Responsive styles for tablets and phones */
+@media (max-width: 768px) {
+  .container-shop {
+    flex-direction: column;
+    padding: 10px;
+  }
+
+  .sidebar_shop {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid #ddd;
+    padding: 15px 10px;
+    margin-bottom: 20px;
+  }
+
+  .shop-category-list {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .shop-category-item {
+    flex: 1 1 45%;
+    text-align: center;
+    padding: 10px 5px;
+    font-size: 14px;
+  }
+
+  .price-range {
+    margin-top: 10px;
+  }
+
+  .shop-search-bar {
+    margin-top: 10px;
+  }
+
+  .sort-controls {
+    flex-direction: row;
+    gap: 10px;
+    margin-top: 15px;
+  }
+
+  .sort-controls label {
+    margin-bottom: 0;
+    align-self: center;
+  }
+
+  .sort-controls select {
+    width: auto;
+    flex: 1;
+  }
+
+  .products-section {
+    padding: 10px 0;
+  }
+
+  .product-grid {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 15px;
+    padding: 10px 0;
+  }
+
+  .pagination-controls {
+    padding: 20px 10px;
+    margin-top: 30px;
+  }
+}
+
+@media (max-width: 480px) {
+  .sidebar_shop {
+    padding: 10px 5px;
+  }
+
+  /* Hide category list by default on phones */
+  .shop-category-list {
+    display: none;
+  }
+
+  /* Show category list when open */
+  .shop-category-list.open {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  /* Show toggle button on phones */
+  .category-toggle-button {
+    display: inline-flex;
+    background: none;
+    border: none;
+    cursor: pointer;
+    margin-left: 10px;
+    vertical-align: middle;
+    padding: 0;
+    color: #098ffd;
+  }
+
+  .shop-category-item {
+    flex: 1 1 100%;
+    font-size: 16px;
+    padding: 12px 8px;
+  }
+
+  .shop-search-bar-input {
+    padding: 8px;
+    font-size: 14px;
+  }
+
+  .shop-search-bar-icon {
+    margin-left: 8px;
+  }
+
+  .sort-controls {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .sort-controls select {
+    width: 100%;
+  }
+
+  .product-grid {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 12px;
+    padding: 5px 0;
+  }
+
+  .pagination-controls {
+    flex-direction: column;
+    gap: 10px;
+    padding: 15px 5px;
+  }
+
+  .pagination-controls button {
+    width: 100%;
+    margin: 0;
+  }
+
+  .pagination-controls span {
+    margin: 5px 0;
+  }
+}

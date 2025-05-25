@@ -6,8 +6,12 @@ export const fetchAllProductColors = async () => {
   return response.data;
 };
 
-export const createProductColor = async (colorData) => {
-  const response = await axiosInstance.post("/api/productColors", colorData, {
+// Updated createProductColor to accept FormData and send multipart/form-data
+export const createProductColor = async (formData) => {
+  const response = await axiosInstance.post("/api/productColors", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
     withCredentials: true,
   });
   return response.data;
@@ -37,7 +41,9 @@ export const fetchAllVariants = async (productId) => {
   if (productId) {
     params.append("product_id", productId);
   }
-  const response = await axiosInstance.get(`/api/variants?${params.toString()}`);
+  const response = await axiosInstance.get(
+    `/api/variants?${params.toString()}`
+  );
   return response.data;
 };
 

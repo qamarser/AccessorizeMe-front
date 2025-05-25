@@ -45,7 +45,7 @@ const OrdersPage = () => {
     try {
       await deleteOrder(order.id);
       setOrders((prevOrders) => prevOrders.filter((o) => o.id !== order.id));
-      toast.success(`Order ${order.id} deleted successfully`);
+      toast.success(`Order deleted successfully`);
     } catch (error) {
       toast.error(`Failed to delete order: ${error.message}`);
     }

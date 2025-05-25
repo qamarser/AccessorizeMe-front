@@ -1,67 +1,133 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import AdminLayout from "../AdminLayout";
 import {
   fetchAllProducts,
   deleteProduct,
   updateProduct,
+  createProduct,
 } from "../../../api/productApi";
 import {
   fetchAllProductColors,
   createProductColor,
+  updateProductColor,
+  deleteProductColor,
 } from "../../../api/productApiExtended";
+import { fetchAllCategories } from "../../../api/categoryApi";
 import { DataGrid } from "react-data-grid";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "react-data-grid/lib/styles.css";
 import "./AdminProductManagement.css";
 
-const ActionsFormatter = ({ row, onEdit, onDelete }) => {
+const ActionsFormatter = ({
+  row,
+  onEdit,
+  onDelete,
+  onSave,
+  onCancel,
+  isEditing,
+}) => {
   return (
     <div style={{ display: "flex", justifyContent: "center", gap: 8 }}>
-      <button
-        onClick={() => onEdit(row.id)}
-        title="Edit Product"
-        aria-label="Edit Product"
-        style={{
-          background: "none",
-          border: "none",
-          cursor: "pointer",
-          color: "#007bff",
-          padding: 4,
-        }}
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-          width="20"
-          height="20"
-          fill="#007bff"
-        >
-          <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 000-1.42l-2.34-2.34a1.003 1.003 0 00-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z" />
-        </svg>
-      </button>
-      <button
-        onClick={() => onDelete(row.id)}
-        title="Delete Product"
-        aria-label="Delete Product"
-        style={{
-          background: "none",
-          border: "none",
-          cursor: "pointer",
-          color: "red",
-          padding: 4,
-        }}
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-          width="20"
-          height="20"
-          fill="red"
-        >
-          <path d="M16 9v10H8V9h8m-1.5-6h-5l-1 1H5v2h14V4h-4.5l-1-1z" />
-        </svg>
-      </button>
+      {!isEditing ? (
+        <>
+          <button
+            onClick={() => onEdit(row.id)}
+            title="Edit Product"
+            aria-label="Edit Product"
+            style={{
+              background: "none",
+              border: "none",
+              cursor: "pointer",
+              color: "#007bff",
+              padding: 4,
+            }}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              width="20"
+              height="20"
+              fill="#007bff"
+            >
+              <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 000-1.42l-2.34-2.34a1.003 1.003 0 00-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z" />
+            </svg>
+          </button>
+          <button
+            onClick={() => onDelete(row.id)}
+            title="Delete Product"
+            aria-label="Delete Product"
+            style={{
+              background: "none",
+              border: "none",
+              cursor: "pointer",
+              color: "red",
+              padding: 4,
+            }}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              width="20"
+              height="20"
+              fill="red"
+            >
+              <path d="M16 9v10H8V9h8m-1.5-6h-5l-1 1H5v2h14V4h-4.5l-1-1z" />
+            </svg>
+          </button>
+        </>
+      ) : (
+        <>
+          <button
+            onClick={() => onSave(row.id)}
+            title="Save Product"
+            aria-label="Save Product"
+            style={{
+              background: "none",
+              border: "none",
+              cursor: "pointer",
+              color: "green",
+              padding: 4,
+            }}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              width="20"
+              height="20"
+              fill="green"
+            >
+              <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
+            </svg>
+          </button>
+          <button
+            onClick={() => onCancel(row.id)}
+            title="Cancel Edit"
+            aria-label="Cancel Edit"
+            style={{
+              background: "none",
+              border: "none",
+              cursor: "pointer",
+              color: "red",
+              padding: 4,
+            }}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              width="20"
+              height="20"
+              fill="none"
+              stroke="red"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M18 6L6 18M6 6l12 12" />
+            </svg>
+          </button>
+        </>
+      )}
     </div>
   );
 };
@@ -71,9 +137,39 @@ const AdminProductManagement = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
 
+  // State for editing row id and row modes model
+  const [editingRowId, setEditingRowId] = useState(null);
+  const [rowModesModel, setRowModesModel] = useState({});
+
   // Form state for adding color
   const [newColorName, setNewColorName] = useState("");
   const [newColorCode, setNewColorCode] = useState("#000000");
+  const [newColorImages, setNewColorImages] = useState([]);
+
+  // Form state for adding product
+  const [newProductName, setNewProductName] = useState("");
+  const [newProductDescription, setNewProductDescription] = useState("");
+  const [newProductPrice, setNewProductPrice] = useState("");
+  const [newProductStock, setNewProductStock] = useState("");
+  const [newProductCategory, setNewProductCategory] = useState("");
+  const [categories, setCategories] = useState([]);
+  const [newProductImages, setNewProductImages] = useState([]);
+  const [newProductFormVisible, setNewProductFormVisible] = useState(false);
+
+  // Form state for editing product
+  const [editProductId, setEditProductId] = useState(null);
+  const [editProductName, setEditProductName] = useState("");
+  const [editProductDescription, setEditProductDescription] = useState("");
+  const [editProductPrice, setEditProductPrice] = useState("");
+  const [editProductStock, setEditProductStock] = useState("");
+  const [editProductCategory, setEditProductCategory] = useState("");
+  const [editProductImages, setEditProductImages] = useState([]);
+  const [editProductColors, setEditProductColors] = useState([]);
+  const [editColorName, setEditColorName] = useState("");
+  const [editColorCode, setEditColorCode] = useState("#000000");
+  const [editColorImages, setEditColorImages] = useState([]);
+  const [editColorId, setEditColorId] = useState(null);
+  const [showAddColorInputs, setShowAddColorInputs] = useState(false);
 
   // Filter state
   const [filterName, setFilterName] = useState("");
@@ -88,60 +184,310 @@ const AdminProductManagement = () => {
   // Expanded row for adding color
   const [expandedRow, setExpandedRow] = useState(null);
 
+  // Ref for hidden file input
+  const fileInputRef = useRef(null);
+
   useEffect(() => {
     fetchData();
+    fetchCategories();
   }, []);
 
-const fetchData = async () => {
-  setLoading(true);
-  try {
-    const productData = await fetchAllProducts();
-    console.log("Fetched product data:", productData);
-    setProducts(productData.formatted || productData);
+  const fetchCategories = async () => {
+    try {
+      const categoriesData = await fetchAllCategories();
+      setCategories(categoriesData);
+    } catch (error) {
+      console.error("Failed to fetch categories", error);
+      toast.error("Failed to load categories");
+    }
+  };
 
-    const colorData = await fetchAllProductColors();
-    setColors(colorData);
-  } catch (error) {
-    console.error("Failed to fetch data", error);
-    toast.error("Failed to load data");
-  }
-  setLoading(false);
-};
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const productData = await fetchAllProducts();
+      setProducts(productData.formatted || productData);
 
+      const colorData = await fetchAllProductColors();
+      setColors(colorData);
+    } catch (error) {
+      console.error("Failed to fetch data", error);
+      toast.error("Failed to load data");
+    }
+    setLoading(false);
+  };
 
+  const handleEditClick = (product) => {
+    setEditProductId(product.id);
+    setEditProductName(product.name);
+    setEditProductDescription(product.description);
+    setEditProductPrice(product.price);
+    setEditProductStock(product.stock);
+    setEditProductCategory(product.category_name);
+    setEditProductImages([]); // Images editing not implemented yet
+    // Filter colors for this product
+    const productColors = colors.filter((c) => c.product_id === product.id);
+    setEditProductColors(productColors);
+  };
+
+  const handleCancelEdit = () => {
+    setEditProductId(null);
+    setEditProductName("");
+    setEditProductDescription("");
+    setEditProductPrice("");
+    setEditProductStock("");
+    setEditProductCategory("");
+    setEditProductImages([]);
+    setEditProductColors([]);
+  };
+
+  const handleNewProductImageChange = (e) => {
+    if (e.target.files && e.target.files.length > 0) {
+      setNewProductImages(Array.from(e.target.files));
+    }
+  };
+
+  const handleCreateProduct = async () => {
+    if (
+      !newProductName.trim() ||
+      !newProductDescription.trim() ||
+      !newProductPrice ||
+      !newProductStock ||
+      !newProductCategory.trim()
+    ) {
+      toast.error("Please fill all required fields");
+      return;
+    }
+    try {
+      const formData = new FormData();
+      formData.append("name", newProductName);
+      formData.append("description", newProductDescription);
+      formData.append("price", newProductPrice);
+      formData.append("stock", newProductStock);
+      formData.append("category_name", newProductCategory);
+      if (newProductImages.length > 0) {
+        newProductImages.forEach((image) => {
+          formData.append("images", image);
+        });
+      }
+
+      await createProduct(formData);
+
+      toast.success("Product created successfully");
+      setNewProductName("");
+      setNewProductDescription("");
+      setNewProductPrice("");
+      setNewProductStock("");
+      setNewProductCategory("");
+      setNewProductImages([]);
+      setNewProductFormVisible(false);
+      fetchData();
+    } catch (error) {
+      console.error("Failed to create product", error);
+      toast.error("Failed to create product");
+    }
+  };
+
+  const handleEditProductImageChange = (e) => {
+    if (e.target.files && e.target.files.length > 0) {
+      setEditProductImages(Array.from(e.target.files));
+    }
+  };
+
+  const handleEditColorImageChange = (e) => {
+    if (e.target.files && e.target.files.length > 0) {
+      setEditColorImages(Array.from(e.target.files));
+    }
+  };
+
+  const handleAddColorToEdit = () => {
+    if (!editColorCode.trim()) {
+      toast.error("Please fill all required fields for color");
+      return;
+    }
+    const newColor = {
+      id: `new-${Date.now()}`, // temporary id for new color
+      color_name: editColorCode, // use hex code as color name
+      color_code: editColorCode,
+      images: editColorImages,
+      isNew: true,
+    };
+    setEditProductColors([...editProductColors, newColor]);
+    setEditColorName("");
+    setEditColorCode("#000000");
+    setEditColorImages([]);
+    setShowAddColorInputs(false);
+  };
+
+  const handleEditColorChange = (colorId, field, value) => {
+    setEditProductColors((prevColors) =>
+      prevColors.map((color) =>
+        color.id === colorId
+          ? { ...color, [field]: value, isEdited: true }
+          : color
+      )
+    );
+  };
+
+  const handleDeleteColorFromEdit = (colorId) => {
+    setEditProductColors((prevColors) =>
+      prevColors.map((color) =>
+        color.id === colorId ? { ...color, isDeleted: true } : color
+      )
+    );
+  };
+
+  const handleSaveEditProduct = async () => {
+    if (
+      !editProductName.trim() ||
+      !editProductDescription.trim() ||
+      !editProductPrice ||
+      !editProductStock ||
+      !editProductCategory.trim()
+    ) {
+      toast.error("Please fill all required fields");
+      return;
+    }
+    // Validate category_name before update
+    if (!categories.some((cat) => cat.name === editProductCategory)) {
+      toast.error("Invalid category selected");
+      return;
+    }
+    try {
+      setLoading(true);
+      // Update product fields
+      const updateData = {
+        name: editProductName,
+        description: editProductDescription,
+        price: editProductPrice,
+        stock: editProductStock,
+        category_name: editProductCategory,
+      };
+      try {
+      try {
+        const response = await updateProduct(editProductId, updateData);
+        console.log("Update product response:", response);
+      } catch (error) {
+        console.error("Update product error response:", error.response || error);
+        throw error;
+      }
+      } catch (error) {
+        console.error("Failed to update product", error);
+        toast.error("Failed to update product");
+      }
+
+      // Handle product colors CRUD
+      for (const color of editProductColors) {
+        try {
+          if (color.isNew) {
+            // Create new color
+            const formData = new FormData();
+            formData.append("color_name", color.color_name);
+            formData.append("color_code", color.color_code);
+            formData.append("product_name", editProductName);
+            if (color.images && color.images.length > 0) {
+              color.images.forEach((img) => {
+                formData.append("images", img);
+              });
+            }
+            await createProductColor(formData);
+          } else if (color.isDeleted) {
+            // Delete color
+            if (!color.id.toString().startsWith("new-")) {
+              await deleteProductColor(color.id);
+            }
+          } else if (color.isEdited) {
+            // Update color
+            if (!color.id.toString().startsWith("new-")) {
+              const updateData = {
+                color_name: color.color_name,
+                color_code: color.color_code,
+              };
+              await updateProductColor(color.id, updateData);
+              // Image update for colors not handled here for simplicity
+            }
+          }
+        } catch (error) {
+          console.error("Failed to update product color", error);
+          toast.error("Failed to update product color");
+          throw error; // stop further processing and prevent success toast
+        }
+      }
+
+      toast.success("Product updated successfully");
+      handleCancelEdit();
+      fetchData();
+    } catch (error) {
+      console.error("Failed to update product", error);
+      toast.error("Failed to update product");
+      return; // prevent success toast if error
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleAddClick = (productId) => {
     setExpandedRow((prev) => (prev === productId ? null : productId));
     setNewColorName("");
     setNewColorCode("#000000");
+    setNewColorImages([]);
   };
 
-  const handleSave = async (productId) => {
-    if (!newColorName.trim()) {
+  const handleSaveColor = async (productId) => {
+    if (!newColorCode.trim()) {
       toast.error("Please fill all required fields");
       return;
     }
     try {
-      // Find product name by productId
       const product = products.find((p) => p.id === productId);
       if (!product) {
         toast.error("Product not found");
         return;
       }
-      // Create color with product_name as expected by backend
-      const colorData = {
-        color_name: newColorName,
-        color_code: newColorCode,
-        product_name: product.name,
-      };
-      await createProductColor(colorData);
+      const formData = new FormData();
+      formData.append("color_name", newColorName || newColorCode);
+      formData.append("color_code", newColorCode);
+      formData.append("product_name", product.name);
+      if (newColorImages.length > 0) {
+        newColorImages.forEach((image) => {
+          formData.append("images", image);
+        });
+      }
+
+      await createProductColor(formData);
 
       toast.success("Color added successfully");
       setExpandedRow(null);
       fetchData();
     } catch (error) {
       console.error("Failed to add color", error);
-      toast.error("Failed to add color");
+      toast.error("Color already exists");
+    }
+  };
+
+  // Remove inline editing handlers and DataGrid inline editing props
+  // Add new handlers for edit form open and cancel
+
+  const handleEdit = (productId) => {
+    const product = products.find((p) => p.id === productId);
+    if (product) {
+      handleEditClick(product);
+    }
+  };
+
+  const handleCancel = () => {
+    handleCancelEdit();
+  };
+
+  const handleImageChange = (e) => {
+    if (e.target.files && e.target.files.length > 0) {
+      setNewColorImages(Array.from(e.target.files));
+    }
+  };
+
+  const handleImageButtonClick = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
     }
   };
 
@@ -153,37 +499,40 @@ const fetchData = async () => {
       resizable: true,
     },
     { key: "name", name: "Product Name", resizable: true, editable: true },
-    { key: "price", name: "Price", resizable: true },
-{
-  key: "image",
-  name: "Image",
-  resizable: true,
-  renderCell: ({ row }) => {
-    // Use first image from Images array if available, else fallback to row.image_url
-    const imageUrl =
-      (row.Images && row.Images.length > 0 && row.Images[0].image_url) ||
-      row.image_url ||
-      "https://via.placeholder.com/50x50?text=No+Image";
-    return (
-      <img
-        src={imageUrl}
-        alt={row.name}
-        style={{
-          width: 50,
-          height: 50,
-          objectFit: "cover",
-          border: "1px solid #ccc",
-        }}
-      />
-    );
-  },
-},
-    // { key: "stock", name: "Stock", resizable: true },
+    {
+      key: "description",
+      name: "Description",
+      resizable: true,
+      editable: true,
+    },
+    { key: "price", name: "Price", resizable: true, editable: true },
+    { key: "category_name", name: "Category", resizable: true, editable: true },
+    {
+      key: "image",
+      name: "Image",
+      resizable: true,
+      renderCell: ({ row }) => {
+        const imageUrl =
+          (row.Images && row.Images.length > 0 && row.Images[0].image_url) ||
+          row.image_url;
+        return (
+          <img
+            src={imageUrl}
+            alt={row.name}
+            style={{
+              width: 50,
+              height: 50,
+              objectFit: "cover",
+              border: "1px solid #ccc",
+            }}
+          />
+        );
+      },
+    },
     {
       key: "colors",
       name: "Colors",
-      resizable: true,
-      renderCell: ({ row }) => {
+      renderCell: ({ row, columns }) => {
         const productColors = colors.filter((c) => c.product_id === row.id);
         return (
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
@@ -205,13 +554,17 @@ const fetchData = async () => {
                 }}
               />
             ))}
-            <button onClick={() => handleAddClick(row.id)} title="Add Color" aria-label="Add Color">
+            <button
+              onClick={() => handleAddClick(row.id)}
+              title="Add Color"
+              aria-label="Add Color"
+            >
               +
             </button>
             {expandedRow === row.id && (
-              <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+              <div style={{ display: "flex", alignItems: "center" }}>
                 <input
-                  type="text"
+                  type="hidden"
                   placeholder="Color name"
                   value={newColorName}
                   onChange={(e) => setNewColorName(e.target.value)}
@@ -220,9 +573,44 @@ const fetchData = async () => {
                 <input
                   type="color"
                   value={newColorCode}
-                  onChange={(e) => setNewColorCode(e.target.value)}
+                  onChange={(e) => {
+                    setNewColorCode(e.target.value);
+                    setNewColorName(e.target.value);
+                  }}
                 />
-                <button onClick={() => handleSave(row.id)}>Save</button>
+                <input
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  onChange={handleImageChange}
+                  ref={fileInputRef}
+                  style={{ display: "none" }}
+                />
+                <button
+                  onClick={handleImageButtonClick}
+                  title="Upload Image"
+                  aria-label="Upload Image"
+                  style={{
+                    background: "none",
+                    border: "none",
+                    cursor: "pointer",
+                    padding: 4,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    width="20"
+                    fill="#007bff"
+                  >
+                    <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM5 5h14v14H5V5zm7 3c-1.66 0-3 1.34-3 3 0 1.66 1.34 3 3 3s3-1.34 3-3c0-1.66-1.34-3-3-3zm0 8c-2.33 0-7 1.17-7 3.5V19h14v-1.5c0-2.33-4.67-3.5-7-3.5z" />
+                  </svg>
+                </button>
+                <button onClick={() => handleSaveColor(row.id)}>Save</button>
               </div>
             )}
           </div>
@@ -234,12 +622,14 @@ const fetchData = async () => {
       name: "Actions",
       width: 100,
       resizable: false,
-      
       renderCell: (props) => (
         <ActionsFormatter
           row={props.row}
           onEdit={handleEdit}
           onDelete={handleDelete}
+          onSave={handleSave}
+          onCancel={handleCancel}
+          isEditing={editingRowId === props.row.id}
         />
       ),
     },
@@ -258,11 +648,28 @@ const fetchData = async () => {
     }
   };
 
-  const handleEdit = (productId) => {
-    // Placeholder for edit functionality
-    toast.info(
-      `Edit functionality for product ID ${productId} is not implemented yet.`
-    );
+  const handleSave = async (productId) => {
+    const row = products.find((p) => p.id === productId);
+    if (!row) return;
+    try {
+      console.log("handleSave updating product with ID:", productId);
+      const updateData = {
+        name: row.name,
+        description: row.description,
+        price: row.price,
+        category_name: row.category_name,
+      };
+      await updateProduct(productId, updateData);
+      toast.success(`Product ${row.name} updated`);
+      await fetchData();
+      setRowModesModel({
+        ...rowModesModel,
+        [productId]: { mode: "view" },
+      });
+      setEditingRowId(null);
+    } catch (error) {
+      toast.error("Failed to update product");
+    }
   };
 
   // Filter products by product name
@@ -289,7 +696,369 @@ const fetchData = async () => {
 
   return (
     <AdminLayout>
-      <h1>Manage Products and Colors</h1>
+      <h1>Manage Products</h1>
+      <div style={{ marginBottom: 12 }}>
+        <button
+          onClick={() => setNewProductFormVisible((prev) => !prev)}
+          style={{
+            padding: "8px 16px",
+            backgroundColor: "#007bff",
+            color: "white",
+            border: "none",
+            borderRadius: 4,
+            cursor: "pointer",
+          }}
+        >
+          {newProductFormVisible ? "Cancel" : "Add New Product"}
+        </button>
+      </div>
+      {newProductFormVisible && (
+        <div
+          style={{
+            marginBottom: 20,
+            padding: 16,
+            border: "1px solid #ccc",
+            borderRadius: 4,
+            maxWidth: 600,
+          }}
+        >
+          <div style={{ marginBottom: 12 }}>
+            <label htmlFor="newProductName" style={{ display: "block" }}>
+              Product Name:
+            </label>
+            <input
+              id="newProductName"
+              type="text"
+              value={newProductName}
+              onChange={(e) => setNewProductName(e.target.value)}
+              style={{ width: "50%", padding: 8 }}
+            />
+          </div>
+          <div style={{ marginBottom: 12 }}>
+            <label htmlFor="newProductDescription" style={{ display: "block" }}>
+              Description:
+            </label>
+            <textarea
+              id="newProductDescription"
+              value={newProductDescription}
+              onChange={(e) => setNewProductDescription(e.target.value)}
+              style={{ width: "50%", padding: 8 }}
+              rows={3}
+            />
+          </div>
+          <div style={{ marginBottom: 12 }}>
+            <label htmlFor="newProductPrice" style={{ display: "block" }}>
+              Price:
+            </label>
+            <input
+              id="newProductPrice"
+              type="number"
+              value={newProductPrice}
+              onChange={(e) => setNewProductPrice(e.target.value)}
+              style={{ width: "10%", padding: 8 }}
+              min="0"
+              step="0.01"
+            />
+          </div>
+          <div style={{ marginBottom: 12 }}>
+            <label htmlFor="newProductStock" style={{ display: "block" }}>
+              Stock:
+            </label>
+            <input
+              id="newProductStock"
+              type="number"
+              value={newProductStock}
+              onChange={(e) => setNewProductStock(e.target.value)}
+              style={{ width: "10%", padding: 8 }}
+              min="0"
+              step="1"
+            />
+          </div>
+          <div style={{ marginBottom: 12 }}>
+            <label htmlFor="newProductCategory" style={{ display: "block" }}>
+              Category:
+            </label>
+            <select
+              id="newProductCategory"
+              value={newProductCategory}
+              onChange={(e) => setNewProductCategory(e.target.value)}
+              style={{ width: "50%", padding: 8 }}
+            >
+              <option value="">Select a category</option>
+              {categories.map((category) => (
+                <option key={category.id} value={category.name}>
+                  {category.name}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div style={{ marginBottom: 12 }}>
+            <label htmlFor="newProductImage" style={{ display: "block" }}>
+              Image:
+            </label>
+            <input
+              id="newProductImages"
+              type="file"
+              accept="image/*"
+              multiple
+              onChange={handleNewProductImageChange}
+            />
+          </div>
+          <button
+            onClick={handleCreateProduct}
+            style={{
+              padding: "8px 16px",
+              backgroundColor: "#28a745",
+              color: "white",
+              border: "none",
+              borderRadius: 4,
+              cursor: "pointer",
+            }}
+          >
+            Create Product
+          </button>
+        </div>
+      )}
+      {editProductId && (
+        <div
+          style={{
+            marginBottom: 20,
+            padding: 16,
+            border: "1px solid #ccc",
+            borderRadius: 4,
+            maxWidth: 600,
+          }}
+        >
+          <h2>Edit Product</h2>
+          <div style={{ marginBottom: 12 }}>
+            <label htmlFor="editProductName" style={{ display: "block" }}>
+              Product Name:
+            </label>
+            <input
+              id="editProductName"
+              type="text"
+              value={editProductName || ""}
+              onChange={(e) => setEditProductName(e.target.value)}
+              style={{ width: "50%", padding: 8 }}
+            />
+          </div>
+          <div style={{ marginBottom: 12 }}>
+            <label
+              htmlFor="editProductDescription"
+              style={{ display: "block" }}
+            >
+              Description:
+            </label>
+            <textarea
+              id="editProductDescription"
+              value={editProductDescription || ""}
+              onChange={(e) => setEditProductDescription(e.target.value)}
+              style={{ width: "50%", padding: 8 }}
+              rows={3}
+            />
+          </div>
+          <div style={{ marginBottom: 12 }}>
+            <label htmlFor="editProductPrice" style={{ display: "block" }}>
+              Price:
+            </label>
+            <input
+              id="editProductPrice"
+              type="number"
+              value={editProductPrice || ""}
+              onChange={(e) => setEditProductPrice(e.target.value)}
+              style={{ width: "10%", padding: 8 }}
+              min="0"
+              step="0.01"
+            />
+          </div>
+          <div style={{ marginBottom: 12 }}>
+            <label htmlFor="editProductStock" style={{ display: "block" }}>
+              Stock:
+            </label>
+            <input
+              id="editProductStock"
+              type="number"
+              value={editProductStock || ""}
+              onChange={(e) => setEditProductStock(e.target.value)}
+              style={{ width: "10%", padding: 8 }}
+              min="0"
+              step="1"
+            />
+          </div>
+          <div style={{ marginBottom: 12 }}>
+            <label htmlFor="editProductCategory" style={{ display: "block" }}>
+              Category:
+            </label>
+            <select
+              id="editProductCategory"
+              value={editProductCategory || ""}
+              onChange={(e) => setEditProductCategory(e.target.value)}
+              style={{ width: "50%", padding: 8 }}
+            >
+              <option value="">Select a category</option>
+              {categories.map((category) => (
+                <option key={category.id} value={category.name}>
+                  {category.name}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div style={{ marginBottom: 12 }}>
+            <label>Colors:</label>
+            {editProductColors
+              .filter((color) => !color.isDeleted)
+              .map((color) => (
+                <div
+                  key={color.id}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 8,
+                    marginBottom: 8,
+                  }}
+                >
+                  <input
+                    type="text"
+                    value={color.color_name}
+                    readOnly
+                    placeholder="Color Name"
+                    style={{
+                      width: 120,
+                      padding: 4,
+                      backgroundColor: "#e9ecef",
+                      cursor: "not-allowed",
+                    }}
+                  />
+                  <input
+                    type="color"
+                    value={color.color_code}
+                    onChange={(e) =>
+                      handleEditColorChange(
+                        color.id,
+                        "color_code",
+                        e.target.value
+                      )
+                    }
+                    style={{
+                      width: 50,
+                      height: 30,
+                      padding: 0,
+                      border: "none",
+                    }}
+                  />
+                  <input
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    onChange={handleEditColorImageChange}
+                  />
+                  <button
+                    onClick={() => handleDeleteColorFromEdit(color.id)}
+                    style={{
+                      backgroundColor: "red",
+                      color: "white",
+                      border: "none",
+                      borderRadius: 4,
+                      cursor: "pointer",
+                      padding: "4px 8px",
+                    }}
+                  >
+                    Delete
+                  </button>
+                </div>
+              ))}
+            {showAddColorInputs ? (
+              <div style={{ marginTop: 8 }}>
+                <input
+                  type="color"
+                  value={editColorCode}
+                  onChange={(e) => setEditColorCode(e.target.value)}
+                  style={{ width: 50, height: 30, padding: 0, border: "none" }}
+                />
+                <input
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  onChange={handleEditColorImageChange}
+                />
+                <button
+                  onClick={handleAddColorToEdit}
+                  style={{
+                    backgroundColor: "#007bff",
+                    color: "white",
+                    border: "none",
+                    borderRadius: 4,
+                    cursor: "pointer",
+                    padding: "4px 8px",
+                    marginLeft: 8,
+                  }}
+                >
+                  Save Color
+                </button>
+                <button
+                  onClick={() => setShowAddColorInputs(false)}
+                  style={{
+                    backgroundColor: "#6c757d",
+                    color: "white",
+                    border: "none",
+                    borderRadius: 4,
+                    cursor: "pointer",
+                    padding: "4px 8px",
+                    marginLeft: 8,
+                  }}
+                >
+                  Cancel
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={() => setShowAddColorInputs(true)}
+                style={{
+                  backgroundColor: "#007bff",
+                  color: "white",
+                  border: "none",
+                  borderRadius: 4,
+                  cursor: "pointer",
+                  padding: "4px 8px",
+                  marginTop: 8,
+                }}
+              >
+                Add Color
+              </button>
+            )}
+          </div>
+          <div style={{ marginTop: 12, display: "flex", gap: 8 }}>
+            <button
+              onClick={handleSaveEditProduct}
+              disabled={loading}
+              style={{
+                padding: "8px 16px",
+                backgroundColor: loading ? "#6c757d" : "#28a745",
+                color: "white",
+                border: "none",
+                borderRadius: 4,
+                cursor: loading ? "not-allowed" : "pointer",
+              }}
+            >
+              {loading ? "Saving..." : "Save Changes"}
+            </button>
+            <button
+              onClick={handleCancelEdit}
+              disabled={loading}
+              style={{
+                padding: "8px 16px",
+                backgroundColor: "#dc3545",
+                color: "white",
+                border: "none",
+                borderRadius: 4,
+                cursor: loading ? "not-allowed" : "pointer",
+              }}
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
       {loading ? (
         <p>Loading...</p>
       ) : (
@@ -331,11 +1100,40 @@ const fetchData = async () => {
               onRowsChange={async (rows, data) => {
                 const updatedRow = rows[data.index];
                 try {
-                  await updateProduct(updatedRow.id, updatedRow);
+                  console.log("Updating product with ID:", updatedRow.id);
+                  // Validate category_name before update
+                  if (
+                    !categories.some(
+                      (cat) => cat.name === updatedRow.category_name
+                    )
+                  ) {
+                    toast.error("Invalid category selected");
+                    return;
+                  }
+                  const updateData = {
+                    name: updatedRow.name,
+                    description: updatedRow.description,
+                    price: updatedRow.price,
+                    // stock: updatedRow.stock,
+                    category_name: updatedRow.category_name,
+                  };
+                  await updateProduct(updatedRow.id, updateData);
                   toast.success(`Product ${updatedRow.name} updated`);
-                  setProducts(rows);
+                  await fetchData();
+                  setEditingRowId(null);
                 } catch (error) {
-                  toast.error("Failed to update product");
+                  console.error("Error updating product:", error);
+                }
+              }}
+              rowModesModel={{
+                [editingRowId]: { mode: "edit" },
+              }}
+              onRowModesChange={(rowModes) => {
+                if (
+                  !rowModes[editingRowId] ||
+                  rowModes[editingRowId].mode !== "edit"
+                ) {
+                  setEditingRowId(null);
                 }
               }}
             />

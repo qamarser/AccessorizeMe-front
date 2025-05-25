@@ -10,7 +10,7 @@ import ProductCard from "../components/ProductCard";
 import "../styling/Shop.css";
 import Slider from "rc-slider";
 import "rc-slider/assets/index.css";
-import { Search } from "lucide-react";
+import { Search, ChevronDown, X } from "lucide-react";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL || "";
 
@@ -38,6 +38,9 @@ const Shop = () => {
   const [totalCount, setTotalCount] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
   const [searchInput, setSearchInput] = useState("");
+
+  // New state for category menu toggle on phones
+  const [categoryMenuOpen, setCategoryMenuOpen] = useState(false);
 
   useEffect(() => {
     const loadCategories = async () => {
@@ -200,8 +203,25 @@ const Shop = () => {
     <div className="container-shop">
       {/* Sidebar */}
       <aside className="sidebar_shop">
-        <h2>Our Categories</h2>
-        <ul className="shop-category-list">
+        <h2>
+          Our Categories
+          {/* Toggle button for phones */}
+          <button
+            className="category-toggle-button"
+            aria-expanded={categoryMenuOpen}
+            aria-controls="category-list"
+            onClick={() => setCategoryMenuOpen(!categoryMenuOpen)}
+            aria-label={categoryMenuOpen ? "Collapse categories" : "Expand categories"}
+          >
+            {categoryMenuOpen ? <X size={20} /> : <ChevronDown size={20} />}
+          </button>
+        </h2>
+        <ul
+          id="category-list"
+          className={`shop-category-list ${
+            categoryMenuOpen ? "open" : "closed"
+          }`}
+        >
           {categories.map((cat) => (
             <li
               key={cat.id}
