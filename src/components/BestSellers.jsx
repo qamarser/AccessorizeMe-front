@@ -10,7 +10,6 @@ const BestSellers = () => {
   useEffect(() => {
     const loadBestSellers = async () => {
       const data = await fetchBestSellers();
-      console.log("Fetched best sellers:", data); // Check this in browser console
       setBestSellers(data);
     };
     loadBestSellers();

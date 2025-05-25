@@ -16,7 +16,6 @@ function getImageUrl(url) {
 
 export default function Cart() {
   const { cart, loading, error, refreshCart, totalAmount } = useCart();
-  console.log("Cart data:", cart);
   const navigate = useNavigate();
 
   const handleIncrement = async (item) => {
@@ -95,13 +94,20 @@ export default function Cart() {
           return (
             <li key={item.id} class="cart-item">
               <div class="cart-item-info">
-                {imageUrl && (
-                  <img
-                    src={imageUrl}
-                    alt={product ? product.name : "Product image"}
-                    className="cart-image"
-                  />
-                )}
+            {imageUrl && (
+              <picture>
+                <source
+                  srcSet={imageUrl.replace(/\.(jpg|jpeg|png)$/i, ".webp")}
+                  type="image/webp"
+                />
+                <img
+                  src={imageUrl}
+                  alt={product ? product.name : "Product image"}
+                  className="cart-image"
+                  loading="lazy"
+                />
+              </picture>
+            )}
                 <div>
                   <p class="cart-product-name">
                     {product ? product.name : "Unknown Product"}

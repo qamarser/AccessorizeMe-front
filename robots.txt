@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Sitemap: https://accessorize-me-front.vercel.app/sitemap.xml

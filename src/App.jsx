@@ -1,29 +1,5 @@
-import React from 'react'
-import { useState } from 'react'
+import React, { Suspense, lazy } from 'react'
 import { Routes, Route, useLocation } from "react-router-dom";
-import Navbar from './components/Navbar'
-import Home from './pages/Home'
-import Shop from './pages/Shop'
-import ProductDetails from './pages/ProductDetails'
-import Login from './pages/Login'
-import Register from './pages/Register'
-import Aboutus from "./pages/Aboutus";
-import Contactus from "./pages/Contactus";
-import Cart from "./pages/Cart";
-import Wishlist from "./pages/wishlist";
-import ShippingPage from './pages/Shipping'
-import CustomerOrders from './pages/CustomerOrders'
-import UserProfile from './pages/UserProfile'
-
-// admin pages
-import AdminDashboard from './pages/dashboard/AdminDashboard'
-import AdminShippingPage from './pages/dashboard/shipping/AdminShippingPage'
-import OrdersPage from './pages/dashboard/orders/Orders'
-import AdminCategory from './pages/dashboard/category/AdminCategory'
-import AdminUser from './pages/dashboard/user/AdminUser'
-import AdminReview from './pages/dashboard/review/AdminReview'
-import AdminProductManagement from './pages/dashboard/product/AdminProductManagement';
-import AdminProductColorsVariants from './pages/dashboard/AdminProductColorsVariants';
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
@@ -33,6 +9,29 @@ import { AuthProvider } from './context/AuthContext'
 import { CartProvider } from "./context/CartContext";
 import { WishlistProvider } from "./context/WishlistContext";
 
+const Navbar = lazy(() => import('./components/Navbar'))
+const Home = lazy(() => import('./pages/Home'))
+const Shop = lazy(() => import('./pages/Shop'))
+const ProductDetails = lazy(() => import('./pages/ProductDetails'))
+const Login = lazy(() => import('./pages/Login'))
+const Register = lazy(() => import('./pages/Register'))
+const Aboutus = lazy(() => import('./pages/Aboutus'))
+const Contactus = lazy(() => import('./pages/Contactus'))
+const Cart = lazy(() => import('./pages/Cart'))
+const Wishlist = lazy(() => import('./pages/wishlist'))
+const ShippingPage = lazy(() => import('./pages/Shipping'))
+const CustomerOrders = lazy(() => import('./pages/CustomerOrders'))
+const UserProfile = lazy(() => import('./pages/UserProfile'))
+
+// admin pages
+const AdminDashboard = lazy(() => import('./pages/dashboard/AdminDashboard'))
+const AdminShippingPage = lazy(() => import('./pages/dashboard/shipping/AdminShippingPage'))
+const OrdersPage = lazy(() => import('./pages/dashboard/orders/Orders'))
+const AdminCategory = lazy(() => import('./pages/dashboard/category/AdminCategory'))
+const AdminUser = lazy(() => import('./pages/dashboard/user/AdminUser'))
+const AdminReview = lazy(() => import('./pages/dashboard/review/AdminReview'))
+const AdminProductManagement = lazy(() => import('./pages/dashboard/product/AdminProductManagement'))
+const AdminProductColorsVariants = lazy(() => import('./pages/dashboard/AdminProductColorsVariants'))
 
 function App()
 {
@@ -44,7 +43,7 @@ function App()
     <AuthProvider>
       <CartProvider>
         <WishlistProvider>
-          <>
+          <Suspense fallback={<div>Loading...</div>}>
             {!isAdminRoute && !isAuthRoute && <Navbar />}
 
             <Routes>
@@ -87,7 +86,7 @@ function App()
             </Routes>
             <ToastContainer />
             {/* <Footer /> */}
-          </>
+          </Suspense>
         </WishlistProvider>
       </CartProvider>
     </AuthProvider>

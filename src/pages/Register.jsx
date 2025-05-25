@@ -65,7 +65,7 @@ const Register = () => {
         <button type="submit">Register</button>
       </form>
       <div>
-        <img src="/image 53.png" alt="Register" />
+        <img src="/image53.png" alt="Register" />
       </div>
     </div>
   );

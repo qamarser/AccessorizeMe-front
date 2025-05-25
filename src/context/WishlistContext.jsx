@@ -31,15 +31,10 @@ export const WishlistProvider = ({ children }) => {
       await addToWishlist(productId);
       toast.success("Added to wishlist!");
       await loadWishlist();
-      alert("Added to wishlist!",productId);
     } catch (err) {
       toast.error( err.response?.data?.message || "Failed to add to wishlist." );
-      console.log("Error adding to wishlist:", err);
     }
   };
-  console.log("Wishlist data:", wishlist);
-  console.log(handleAddToWishlist);
- 
 
   const handleRemoveFromWishlist = async (product_id) => {
     try {

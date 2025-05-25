@@ -32,7 +32,7 @@ const KittyGoHeadset = () =>
       />
 
       <div className="image-section">
-        <img src="/Group 126.png" alt="Kitty Go Headset" />
+        <img src="/Group126.png" alt="Kitty Go Headset" />
       </div>
     </div>
   );

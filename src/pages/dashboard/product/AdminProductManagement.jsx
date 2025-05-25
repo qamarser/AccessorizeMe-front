@@ -240,7 +240,7 @@ const AdminProductManagement = () => {
     setEditProductImages([]);
     setEditProductColors([]);
   };
-
+// console.log("Edit Product ID:", setEditProductColors);
   const handleNewProductImageChange = (e) => {
     if (e.target.files && e.target.files.length > 0) {
       setNewProductImages(Array.from(e.target.files));
@@ -327,14 +327,19 @@ const AdminProductManagement = () => {
           : color
       )
     );
+    // console.log("Edited color:", colorId, field, value);
+
   };
 
-  const handleDeleteColorFromEdit = (colorId) => {
-    setEditProductColors((prevColors) =>
-      prevColors.map((color) =>
+  const handleDeleteColorFromEdit = ( colorId ) =>
+  {
+    
+    setEditProductColors( ( prevColors ) =>
+      prevColors.map( ( color ) =>
         color.id === colorId ? { ...color, isDeleted: true } : color
       )
     );
+    // console.log( "Deleted color with ID:", colorId );
   };
 
   const handleSaveEditProduct = async () => {
@@ -348,6 +353,9 @@ const AdminProductManagement = () => {
       toast.error("Please fill all required fields");
       return;
     }
+    // console.log("Saving product with ID:", editProductId);
+    
+    
     // Validate category_name before update
     if (!categories.some((cat) => cat.name === editProductCategory)) {
       toast.error("Invalid category selected");
@@ -364,13 +372,16 @@ const AdminProductManagement = () => {
         category_name: editProductCategory,
       };
       try {
-      try {
-        const response = await updateProduct(editProductId, updateData);
-        console.log("Update product response:", response);
-      } catch (error) {
-        console.error("Update product error response:", error.response || error);
-        throw error;
-      }
+        try {
+          const response = await updateProduct(editProductId, updateData);
+          // console.log("Update product response:", response);
+        } catch (error) {
+          console.error(
+            "Update product error response:",
+            error.response || error
+          );
+          throw error;
+        }
       } catch (error) {
         console.error("Failed to update product", error);
         toast.error("Failed to update product");
@@ -460,7 +471,7 @@ const AdminProductManagement = () => {
       setExpandedRow(null);
       fetchData();
     } catch (error) {
-      console.error("Failed to add color", error);
+      // console.error("Failed to add color", error);
       toast.error("Color already exists");
     }
   };
@@ -473,7 +484,8 @@ const AdminProductManagement = () => {
     if (product) {
       handleEditClick(product);
     }
-  };
+    // console.log( "Edit button clicked for product ID:", productId );
+     };
 
   const handleCancel = () => {
     handleCancelEdit();
@@ -504,9 +516,17 @@ const AdminProductManagement = () => {
       name: "Description",
       resizable: true,
       editable: true,
+      width: 200,
+      renderCell: ({ row }) => {
+        const words = row.description ? row.description.split(" ") : [];
+        const truncated =
+          words.length > 5 ? words.slice(0, 5).join(" ") + "..." : row.description;
+        return <span title={row.description}>{truncated}</span>;
+      },
     },
     { key: "price", name: "Price", resizable: true, editable: true },
     { key: "category_name", name: "Category", resizable: true, editable: true },
+    // { key: "stock", name: "Stock", resizable: true, editable: true },
     {
       key: "image",
       name: "Image",
@@ -516,16 +536,23 @@ const AdminProductManagement = () => {
           (row.Images && row.Images.length > 0 && row.Images[0].image_url) ||
           row.image_url;
         return (
-          <img
-            src={imageUrl}
-            alt={row.name}
-            style={{
-              width: 50,
-              height: 50,
-              objectFit: "cover",
-              border: "1px solid #ccc",
-            }}
-          />
+          <picture>
+            <source
+              srcSet={imageUrl.replace(/\.(jpg|jpeg|png)$/i, ".webp")}
+              type="image/webp"
+            />
+            <img
+              src={imageUrl}
+              alt={row.name}
+              style={{
+                width: 50,
+                height: 50,
+                objectFit: "cover",
+                border: "1px solid #ccc",
+              }}
+              loading="lazy"
+            />
+          </picture>
         );
       },
     },
@@ -554,14 +581,14 @@ const AdminProductManagement = () => {
                 }}
               />
             ))}
-            <button
+            {/* <button
               onClick={() => handleAddClick(row.id)}
               title="Add Color"
               aria-label="Add Color"
             >
               +
-            </button>
-            {expandedRow === row.id && (
+            </button> */}
+            {/* {expandedRow === row.id && (
               <div style={{ display: "flex", alignItems: "center" }}>
                 <input
                   type="hidden"
@@ -612,7 +639,7 @@ const AdminProductManagement = () => {
                 </button>
                 <button onClick={() => handleSaveColor(row.id)}>Save</button>
               </div>
-            )}
+            )} */}
           </div>
         );
       },
@@ -648,7 +675,9 @@ const AdminProductManagement = () => {
     }
   };
 
-  const handleSave = async (productId) => {
+  const handleSave = async ( productId ) =>
+  {
+    // alert("Save button clicked for product ID: " + productId);
     const row = products.find((p) => p.id === productId);
     if (!row) return;
     try {
@@ -659,6 +688,7 @@ const AdminProductManagement = () => {
         price: row.price,
         category_name: row.category_name,
       };
+      
       await updateProduct(productId, updateData);
       toast.success(`Product ${row.name} updated`);
       await fetchData();
@@ -918,7 +948,7 @@ const AdminProductManagement = () => {
                   }}
                 >
                   <input
-                    type="text"
+                    type="hidden"
                     value={color.color_name}
                     readOnly
                     placeholder="Color Name"
@@ -1114,7 +1144,7 @@ const AdminProductManagement = () => {
                     name: updatedRow.name,
                     description: updatedRow.description,
                     price: updatedRow.price,
-                    // stock: updatedRow.stock,
+                    stock: updatedRow.stock,
                     category_name: updatedRow.category_name,
                   };
                   await updateProduct(updatedRow.id, updateData);

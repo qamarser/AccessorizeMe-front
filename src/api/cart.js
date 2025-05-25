@@ -8,7 +8,6 @@ export const addToCart = async (product_id, quantity, product_variant_id = null,
     { product_id, quantity, product_variant_id, product_color_id, selectedImageUrl },
     { withCredentials: true }
   );
-  console.log("Add to cart response:", response.data);
   return response.data;
 };
 
@@ -17,7 +16,6 @@ export const getCart = async () => {
   const response = await axiosInstance.get("/api/cart", {
     withCredentials: true,
   });
-  console.log("Get cart response:", response.data);
   return response.data;
 };
 

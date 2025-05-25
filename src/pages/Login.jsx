@@ -75,7 +75,7 @@ const Login = () => {
       )}
 
       <div>
-        <img src="/log (1).PNG" alt="Login" />
+        <img src="/log(1).PNG" alt="Login" />
       </div>
     </div>
   );

@@ -18,7 +18,7 @@ function Aboutus() {
           Mobile Personalization Easy, Enjoyable, And Affordable For Everyone.
         </p>
         <img
-          src="/image 27.png"
+          src="/image27.png"
           alt="Person holding phone with accessories"
           className="who-we-are-image"
         />

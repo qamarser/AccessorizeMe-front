@@ -76,11 +76,18 @@ const ProductCard = ({ product }) => {
       style={{ cursor: "pointer" }}
     >
       {imageUrl && (
-        <img
-          src={getImageUrl(imageUrl)}
-          alt={altText}
-          className="product-image"
-        />
+        <picture>
+          <source
+            srcSet={getImageUrl(imageUrl).replace(/\.(jpg|jpeg|png)$/i, ".webp")}
+            type="image/webp"
+          />
+          <img
+            src={getImageUrl(imageUrl)}
+            alt={altText}
+            className="product-image"
+            loading="lazy"
+          />
+        </picture>
       )}
       <div className="hover-content">
         <div className="details">
@@ -90,7 +97,7 @@ const ProductCard = ({ product }) => {
         <button className="add-to-cart-btn" onClick={handleAddToCart}>
           <ShoppingCart size={16} /> Add to cart
         </button>
-        <button className="favorite-btn" onClick={handleAddToWishlist}>
+        <button className="favorite-btn" name="Add to wishlist" onClick={handleAddToWishlist}>
           <Heart size={20} />
         </button>
       </div>
