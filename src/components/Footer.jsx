@@ -21,10 +21,10 @@ const Footer = () => {
           <a href="/shop" className="footer-link">
             Shop
           </a>
-          <a href="/aboutus" className="footer-link">
+          <a href="/about" className="footer-link">
             About Us
           </a>
-          <a href="/contactus" className="footer-link">
+          <a href="/contact" className="footer-link">
             Contact
           </a>
         </div>
