@@ -153,3 +153,150 @@
   align-self: flex-start;
   text-align: left;
 }
+
+@media (min-width: 1920px) {
+  .product-details-container {
+    max-width: 1400px;
+    margin: auto;
+    display: flex;
+    gap: 3rem;
+    padding: 3rem;
+  }
+
+  .product-main-img {
+    width: 500px;
+    height: 500px;
+  }
+
+  .product-thumbnails {
+    max-width: 150px;
+  }
+
+  .product-thumbnail-img {
+    width: 80px;
+    height: 80px;
+  }
+
+  .product-info {
+    max-width: 600px;
+  }
+
+  .action-buttons {
+    gap: 2rem;
+  }
+
+  .action-button {
+    padding: 1rem 3rem;
+    font-size: 18px;
+  }
+}
+
+@media (min-width: 2560px) {
+  .product-details-container {
+    max-width: 1800px;
+    padding: 4rem;
+    gap: 4rem;
+  }
+
+  .product-main-img {
+    width: 600px;
+    height: 600px;
+  }
+
+  .product-thumbnail-img {
+    width: 100px;
+    height: 100px;
+  }
+
+  .product-info h2 {
+    font-size: 2.5rem;
+  }
+
+  .product-price {
+    font-size: 1.75rem;
+  }
+
+  .action-button {
+    padding: 1.2rem 4rem;
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .product-details-container {
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+  }
+
+  .product-images-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .product-thumbnails {
+    flex-direction: row;
+    gap: 8px;
+    max-height: unset;
+    overflow-x: auto;
+  }
+
+  .product-thumbnail-img {
+    width: 50px;
+    height: 50px;
+  }
+
+  .product-main-img {
+    width: 90%;
+    height: auto;
+  }
+
+  .product-info {
+    max-width: 100%;
+    text-align: center;
+    padding: 0;
+  }
+
+  .color-selector {
+    justify-content: center;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .action-button {
+    width: 100%;
+    padding: 10px;
+  }
+}
+
+@media (max-width: 400px) {
+  .product-thumbnails {
+    gap: 5px;
+  }
+
+  .product-thumbnail-img {
+    width: 40px;
+    height: 40px;
+  }
+
+  .product-main-img {
+    width: 100%;
+  }
+
+  .product-info h2 {
+    font-size: 1.5rem;
+  }
+
+  .product-price {
+    font-size: 1.1rem;
+  }
+
+  .action-button {
+    font-size: 14px;
+    padding: 8px;
+  }
+}

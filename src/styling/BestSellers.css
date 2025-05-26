@@ -46,3 +46,33 @@
   margin-top: 2rem;
   margin-bottom: 2rem;
 }
+
+@media (max-width: 768px) {
+  .best-sellers-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 400px) {
+  .best-sellers-grid {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+  }
+
+  .best-sellers-heading {
+    font-size: 1.3rem;
+    text-align: center;
+  }
+}
+
+@media (min-width: 1920px) {
+  .best-sellers-grid {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 20px;
+  }
+
+  .best-sellers-heading {
+    font-size: 2rem;
+  }
+}

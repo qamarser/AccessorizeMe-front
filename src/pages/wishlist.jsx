@@ -30,38 +30,24 @@ export default function Wishlist() {
     loadWishlist();
   }, []);
 
-  const handleAddToCart = async (productId) => {
+  const [addingIds, setAddingIds] = useState({});
+
+  const handleAddToCart = async (wishlistId, productId) => {
+    if (addingIds[productId]) return; // prevent double click
+    setAddingIds((prev) => ({ ...prev, [productId]: true }));
     try {
       await addToCart(productId, 1);
       await refreshCart();
-      toast.success("Added to cart");
+      await handleRemoveFromWishlist(wishlistId);
+      toast.success("Added to cart and removed from wishlist");
     } catch (err) {
       toast.error("product already in cart");
+    } finally {
+      setAddingIds((prev) => ({ ...prev, [productId]: false }));
     }
   };
 
-  // const handleAddToCart = async () => {
-  //   try {
-  //     setAdding(true);
-  //     await addToCart(product.id, 1);
-  //     await refreshCart();
-  //     toast.success("Product added");
-  //   } catch (error) {
-  //     console.error("Error adding to cart:", error);
-  //   } finally {
-  //     setAdding(false);
-  //   }
-  // };
-
-  // const handleAddToWishlist = async (productId) => {
-  //   try {
-  //     await addToWishlist(productId);
-  //     toast.success("Added to wishlist");
-  //     setWishlist((prev) => [...prev, { Product: { id: productId } }]);
-  //   } catch (err) {
-  //     toast.error("Failed to add to wishlist");
-  //   }
-  // };
+ 
   
   const handleRemoveFromWishlist = async (wishlistId) => {
     try {
@@ -77,7 +63,10 @@ export default function Wishlist() {
   if (!wishlist.length) return <p>Your wishlist is empty.</p>;
 
   return (
-    <div>
+    <div
+      className="wishlist-container"
+      style={{ minHeight: "calc(100vh - 3.5rem - 2.5rem)", maxWidth: "900px", margin: "auto", padding: "20px" }}
+    >
       <h2 >Your Wishlist</h2>
       <ul>
         {wishlist.map((item) => (
@@ -90,15 +79,11 @@ export default function Wishlist() {
               <p>Price: ${item.Product.price}</p>
             </div>
             <div >
-              {/* <button
-                onClick={() => handleAddToCart(item.Product.id)}
-
-              >
-                Add to Cart
-              </button> */}
               <Button
-                onClick={() => handleAddToCart(item.Product.id)}
-                text="Add to Cart"/>
+                onClick={() => handleAddToCart(item.id, item.Product.id)}
+                text={addingIds[item.Product.id] ? "Adding..." : "Add to Cart"}
+                disabled={addingIds[item.Product.id]}
+              />
               <button
                 onClick={() => handleRemoveFromWishlist(item.id)}
 

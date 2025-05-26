@@ -122,3 +122,201 @@
     margin-left: 10px;
   }
   
+  @media (min-width: 1920px) {
+    .user-profile-container {
+      max-width: 1400px;
+      margin: auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 3rem;
+    }
+  
+    .profile-card {
+      width: 600px; /* Increase profile card size */
+      padding: 40px;
+    }
+  
+    .profile-img {
+      width: 80px;
+      height: 80px;
+    }
+  
+    .profile-name {
+      font-size: 24px;
+    }
+  
+    .profile-email {
+      font-size: 18px;
+    }
+  
+    .value input {
+      font-size: 16px;
+      padding: 8px 12px;
+    }
+  
+    .action-button {
+      font-size: 18px;
+      padding: 12px 24px;
+    }
+  }
+  
+  @media (min-width: 2560px) {
+    .user-profile-container {
+      max-width: 1800px;
+      padding: 4rem;
+    }
+  
+    .profile-card {
+      width: 750px; /* Larger profile card */
+      padding: 50px;
+    }
+  
+    .profile-img {
+      width: 100px;
+      height: 100px;
+    }
+  
+    .profile-name {
+      font-size: 28px;
+    }
+  
+    .profile-email {
+      font-size: 20px;
+    }
+  
+    .action-button {
+      font-size: 20px;
+      padding: 16px 30px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .user-profile-container {
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+  
+    .profile-card {
+      width: 90%;
+      padding: 20px;
+    }
+  
+    .profile-img {
+      width: 60px;
+      height: 60px;
+    }
+  
+    .profile-name {
+      font-size: 1.4rem;
+    }
+  
+    .profile-email {
+      font-size: 1rem;
+    }
+  
+    .profile-row {
+      flex-direction: column;
+      text-align: left;
+    }
+  
+    .action-buttons {
+      flex-direction: column;
+      width: 100%;
+    }
+  
+    .action-button {
+      width: 100%;
+      padding: 10px;
+    }
+  }
+  
+  @media (max-width: 400px) {
+    .profile-card {
+      width: 95%;
+      padding: 15px;
+    }
+  
+    .profile-img {
+      width: 50px;
+      height: 50px;
+    }
+  
+    .profile-name {
+      font-size: 1.2rem;
+    }
+  
+    .profile-email {
+      font-size: 0.9rem;
+    }
+  
+    .value input {
+      font-size: 14px;
+      padding: 6px;
+      width: 100%;
+    }
+  
+    .action-buttons {
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+  
+    .action-button {
+      font-size: 14px;
+      padding: 8px;
+      width: 100%;
+    }
+  }
+
+  /* Responsive table container */
+.table-container {
+  width: 100%;
+  overflow-x: auto; /* Enables horizontal scrolling on small screens */
+}
+
+/* Fix table layout */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: auto; /* Allows columns to adjust dynamically */
+}
+
+/* Ensure text wraps properly */
+td, th {
+  word-wrap: break-word;
+  white-space: nowrap; /* Prevent text from overflowing */
+  padding: 10px;
+}
+
+/* Style adjustments for small screens */
+@media (max-width: 600px) {
+  .table-container {
+    overflow-x: scroll; /* Enable scrolling */
+  }
+
+  table {
+    font-size: 14px;
+  }
+
+  td, th {
+    padding: 6px;
+    white-space: normal; /* Allow text wrapping */
+  }
+
+  ul {
+    padding-left: 10px;
+  }
+}
+
+@media (max-width: 400px) {
+  table {
+    font-size: 12px;
+  }
+
+  td, th {
+    padding: 4px;
+  }
+}

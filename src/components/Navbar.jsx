@@ -6,9 +6,9 @@ import { useAuth } from "../context/AuthContext";
 import { Badge } from "@mui/material";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder"; // Wishlist heart
-import MenuIcon from "@mui/icons-material/Menu"; // Mobile toggle
-import CloseIcon from "@mui/icons-material/Close"; // Mobile close
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder"; 
+import MenuIcon from "@mui/icons-material/Menu"; 
+import CloseIcon from "@mui/icons-material/Close";
 import "../styling/Navbar.css";
 
 const Navbar = () => {
@@ -89,11 +89,11 @@ const Navbar = () => {
           </button> */}
         </div>
         <div className="nav-right">
-          <button onClick={handleWishlistClick} name="wishlist"  className="wishlist-button">
+          <button onClick={handleWishlistClick} name="wishlist"  className="wishlist-button icon-button-no-bg">
             <FavoriteBorderIcon fontSize="large" />
           </button>
 
-          <button onClick={handleCartClick} className="cart-button btn-nav">
+          <button onClick={handleCartClick} className="cart-button btn-nav icon-button-no-bg">
             <Badge badgeContent={cartCount} color="error" overlap="rectangular" name="cart-badge">
               <ShoppingCartIcon fontSize="large" />
             </Badge>
@@ -107,15 +107,15 @@ const Navbar = () => {
                 navigate("/login");
               }
             }}
-            className="profile-button btn-nav"
+            className="profile-button btn-nav icon-button-no-bg"
             name="profile-button"
           >
             <AccountCircleIcon fontSize="large" />
           </button>
 
-          {/* Mobile toggle */}
+          {/* Mobile toggle */} 
           <button
-            className="nav-toggle btn-nav"
+            className="nav-toggle btn-nav icon-button-no-bg"
             onClick={() => setMenuOpen(true)}
             aria-label="Open menu"
           >
@@ -128,7 +128,7 @@ const Navbar = () => {
       <div className={`nav-menu ${menuOpen ? "show-menu" : ""}`}>
         <button
           onClick={() => setMenuOpen(false)}
-          className="nav-close btn-nav"
+          className="nav-close btn-nav icon-button-no-bg"
           aria-label="Close menu"
         >
           <CloseIcon fontSize="large" />

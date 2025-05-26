@@ -30,8 +30,12 @@ export default function ShippingForm() {
     setFormData({ ...formData, [name]: value });
   };
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (isSubmitting) return;
+    setIsSubmitting(true);
     try {
       // 1️⃣ Save shipping info
       const shipping = await createShipping(formData);
@@ -58,6 +62,8 @@ export default function ShippingForm() {
       toast.error(
         err.response?.data?.message || "Failed to save shipping / place order"
       );
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -118,7 +124,8 @@ export default function ShippingForm() {
           type="submit"
           className="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded transition duration-300"
           onClick={handleSubmit}
-          text="Save Shipping Info"
+          text={isSubmitting ? "Processing..." : "Save Shipping Info"}
+          disabled={isSubmitting}
         />
       </form>
     </div>

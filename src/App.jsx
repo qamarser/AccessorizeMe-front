@@ -22,6 +22,7 @@ const Wishlist = lazy(() => import('./pages/wishlist'))
 const ShippingPage = lazy(() => import('./pages/Shipping'))
 const CustomerOrders = lazy(() => import('./pages/CustomerOrders'))
 const UserProfile = lazy(() => import('./pages/UserProfile'))
+const Footer = lazy( () => import( './components/Footer' ) )
 
 // admin pages
 const AdminDashboard = lazy(() => import('./pages/dashboard/AdminDashboard'))
@@ -85,7 +86,7 @@ function App()
               <Route path="/admin/dashboard/colors-variants" element={<AdminProductColorsVariants />} />
             </Routes>
             <ToastContainer />
-            {/* <Footer /> */}
+            {!isAdminRoute && <Footer />}
           </Suspense>
         </WishlistProvider>
       </CartProvider>

@@ -15,13 +15,14 @@ function getImageUrl(url) {
 }
 
 export default function Cart() {
-  const { cart, loading, error, refreshCart, totalAmount } = useCart();
+  const { cart, loading, error, refreshCart, totalAmount, updateCartItemLocally, deleteCartItemLocally } = useCart();
   const navigate = useNavigate();
 
   const handleIncrement = async (item) => {
     try {
       await updateCartItem(item.id, item.quantity + 1);
-      await refreshCart();
+      updateCartItemLocally(item.id, item.quantity + 1);
+      // Removed refreshCart call to prevent full reload
     } catch (err) {
       console.error("Failed to increment quantity", err);
     }
@@ -31,7 +32,8 @@ export default function Cart() {
     if (item.quantity <= 1) return; // Prevent quantity less than 1
     try {
       await updateCartItem(item.id, item.quantity - 1);
-      await refreshCart();
+      updateCartItemLocally(item.id, item.quantity - 1);
+      // Removed refreshCart call to prevent full reload
     } catch (err) {
       console.error("Failed to decrement quantity", err);
     }
@@ -40,13 +42,18 @@ export default function Cart() {
   const handleDelete = async (item) => {
     try {
       await deleteCartItem(item.id);
-      await refreshCart();
+      deleteCartItemLocally(item.id);
+      // Removed refreshCart call to prevent full reload
     } catch (err) {
       console.error("Failed to delete cart item", err);
     }
   };
 
+  const [checkingOut, setCheckingOut] = React.useState(false);
+
   const handleCheckout = () => {
+    if (checkingOut) return;
+    setCheckingOut(true);
     navigate("/shipping");
   };
 
@@ -126,13 +133,6 @@ export default function Cart() {
                 {/* <button onClick={() => handleDelete(item)}>Remove</button> */}
               </div>
               <div class="cart-actions">
-                {/* <button onclick="handleDecrement(item)" class="cart-btn">
-                  -
-                </button>
-                <span class="cart-quantity">{item.quantity}</span>
-                <button onclick="handleIncrement(item)" class="cart-btn">
-                  +
-                </button> */}
                 {/* <p class="cart-btn"> */}
                 <button onClick={() => handleDecrement(item)} class="cart-btn">
                   -
@@ -156,11 +156,11 @@ export default function Cart() {
       
       <div class="cart-footer">
       <p class="cart-total">Total: ${totalAmount.toFixed(2)}</p>
-        {/* <button onClick={handleCheckout} class="cart-checkout-btn">Checkout</button> */}
         <Button
-          text="Checkout"
+          text={checkingOut ? "Processing..." : "Checkout"}
           onClick={handleCheckout}
           className="cart-checkout-btn"
+          disabled={checkingOut}
         />
         <Button
           text="Continue Shopping"

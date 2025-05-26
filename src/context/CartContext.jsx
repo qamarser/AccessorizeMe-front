@@ -26,6 +26,20 @@ export function CartProvider({ children }) {
     setCart([]);
   };
 
+  // New function to update cart item locally
+  const updateCartItemLocally = (itemId, newQuantity) => {
+    setCart((prevCart) =>
+      prevCart.map((item) =>
+        item.id === itemId ? { ...item, quantity: newQuantity } : item
+      )
+    );
+  };
+
+  // New function to delete cart item locally
+  const deleteCartItemLocally = (itemId) => {
+    setCart((prevCart) => prevCart.filter((item) => item.id !== itemId));
+  };
+
   useEffect(() => {
     fetchCart();
   }, []);
@@ -43,6 +57,8 @@ export function CartProvider({ children }) {
     error,
     refreshCart: fetchCart,
     clearCart,
+    updateCartItemLocally,
+    deleteCartItemLocally,
     cartCount: safeCart.reduce((sum, item) => sum + item.quantity, 0),
     totalAmount,
   };

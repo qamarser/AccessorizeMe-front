@@ -129,16 +129,22 @@ export default function ProductDetails() {
     }
   };
 
+  const [addingToWishlist, setAddingToWishlist] = useState(false);
+
   const handleAddToWishlist = async () => {
     if (!isAuthenticated) {
       navigate("/login");
       return;
     }
+    if (addingToWishlist) return;
+    setAddingToWishlist(true);
     try {
       await addToWishlist(product.id);
       toast.success("Added to wishlist");
     } catch (err) {
       toast.error("Failed to add to wishlist");
+    } finally {
+      setAddingToWishlist(false);
     }
   };
 
@@ -220,8 +226,9 @@ export default function ProductDetails() {
           <button
             className="action-button add-to-wishlist"
             onClick={handleAddToWishlist}
+            disabled={addingToWishlist}
           >
-            Add to Wishlist
+            {addingToWishlist ? "Adding..." : "Add to Wishlist"}
           </button>
         </div>
 

@@ -205,8 +205,18 @@ const AdminProductManagement = () => {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const productData = await fetchAllProducts();
-      setProducts(productData.formatted || productData);
+      let allProducts = [];
+      let page = 1;
+      while (true) {
+        const productData = await fetchAllProducts({ page });
+        const productsPage = productData.formatted || productData;
+        if (!productsPage || productsPage.length === 0) {
+          break;
+        }
+        allProducts = allProducts.concat(productsPage);
+        page++;
+      }
+      setProducts(allProducts);
 
       const colorData = await fetchAllProductColors();
       setColors(colorData);
@@ -240,7 +250,7 @@ const AdminProductManagement = () => {
     setEditProductImages([]);
     setEditProductColors([]);
   };
-// console.log("Edit Product ID:", setEditProductColors);
+  // console.log("Edit Product ID:", setEditProductColors);
   const handleNewProductImageChange = (e) => {
     if (e.target.files && e.target.files.length > 0) {
       setNewProductImages(Array.from(e.target.files));
@@ -328,14 +338,11 @@ const AdminProductManagement = () => {
       )
     );
     // console.log("Edited color:", colorId, field, value);
-
   };
 
-  const handleDeleteColorFromEdit = ( colorId ) =>
-  {
-    
-    setEditProductColors( ( prevColors ) =>
-      prevColors.map( ( color ) =>
+  const handleDeleteColorFromEdit = (colorId) => {
+    setEditProductColors((prevColors) =>
+      prevColors.map((color) =>
         color.id === colorId ? { ...color, isDeleted: true } : color
       )
     );
@@ -354,8 +361,7 @@ const AdminProductManagement = () => {
       return;
     }
     // console.log("Saving product with ID:", editProductId);
-    
-    
+
     // Validate category_name before update
     if (!categories.some((cat) => cat.name === editProductCategory)) {
       toast.error("Invalid category selected");
@@ -485,7 +491,7 @@ const AdminProductManagement = () => {
       handleEditClick(product);
     }
     // console.log( "Edit button clicked for product ID:", productId );
-     };
+  };
 
   const handleCancel = () => {
     handleCancelEdit();
@@ -520,7 +526,9 @@ const AdminProductManagement = () => {
       renderCell: ({ row }) => {
         const words = row.description ? row.description.split(" ") : [];
         const truncated =
-          words.length > 5 ? words.slice(0, 5).join(" ") + "..." : row.description;
+          words.length > 5
+            ? words.slice(0, 5).join(" ") + "..."
+            : row.description;
         return <span title={row.description}>{truncated}</span>;
       },
     },
@@ -545,9 +553,9 @@ const AdminProductManagement = () => {
               src={imageUrl}
               alt={row.name}
               style={{
-                width: 50,
-                height: 50,
-                objectFit: "cover",
+                width: "100%",
+                height: "100%",
+                objectFit: "contain",
                 border: "1px solid #ccc",
               }}
               loading="lazy"
@@ -675,8 +683,7 @@ const AdminProductManagement = () => {
     }
   };
 
-  const handleSave = async ( productId ) =>
-  {
+  const handleSave = async (productId) => {
     // alert("Save button clicked for product ID: " + productId);
     const row = products.find((p) => p.id === productId);
     if (!row) return;
@@ -688,7 +695,7 @@ const AdminProductManagement = () => {
         price: row.price,
         category_name: row.category_name,
       };
-      
+
       await updateProduct(productId, updateData);
       toast.success(`Product ${row.name} updated`);
       await fetchData();
@@ -834,19 +841,42 @@ const AdminProductManagement = () => {
               onChange={handleNewProductImageChange}
             />
           </div>
-          <button
-            onClick={handleCreateProduct}
-            style={{
-              padding: "8px 16px",
-              backgroundColor: "#28a745",
-              color: "white",
-              border: "none",
-              borderRadius: 4,
-              cursor: "pointer",
-            }}
-          >
-            Create Product
-          </button>
+      <button
+        onClick={handleCreateProduct}
+        disabled={loading}
+        style={{
+          padding: "8px 16px",
+          backgroundColor: loading ? "#6c757d" : "#28a745",
+          color: "white",
+          border: "none",
+          borderRadius: 4,
+          cursor: loading ? "not-allowed" : "pointer",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: "8px",
+        }}
+      >
+        {loading ? (
+          <>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              style={{ marginRight: 4 }}
+              width="16"
+              height="16"
+              fill="currentColor"
+              className="bi bi-arrow-repeat spin"
+              viewBox="0 0 16 16"
+            >
+              <path d="M2 2a.5.5 0 0 1 .5.5V5a.5.5 0 0 1-1 0V3.707A6.002 6.002 0 0 1 8 2a6 6 0 0 1 5.996 5.775.5.5 0 0 1-.998.05A5 5 0 0 0 8 3a5.002 5.002 0 0 0-4.9 4H4.5a.5.5 0 0 1 0 1H2.5A.5.5 0 0 1 2 7.5v-5z"/>
+              <path d="M14 14a.5.5 0 0 1-.5-.5V11a.5.5 0 0 1 1 0v1.293A6.002 6.002 0 0 1 8 14a6 6 0 0 1-5.996-5.775.5.5 0 0 1 .998-.05A5 5 0 0 0 8 13a5.002 5.002 0 0 0 4.9-4H11.5a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5v5z"/>
+            </svg>
+            Creating...
+          </>
+        ) : (
+          "Create Product"
+        )}
+      </button>
         </div>
       )}
       {editProductId && (

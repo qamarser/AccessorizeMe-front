@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ShoppingCart, Heart } from "lucide-react";
 import { toast } from "react-toastify";
@@ -14,6 +14,9 @@ const ProductCard = ({ product }) => {
   const navigate = useNavigate();
   const { refreshCart } = useCart();
   const { isAuthenticated } = useAuth();
+
+  const [addingToCart, setAddingToCart] = useState(false);
+  const [addingToWishlist, setAddingToWishlist] = useState(false);
 
   const imageUrl =
     product.image_url ||
@@ -42,6 +45,8 @@ const ProductCard = ({ product }) => {
       navigate("/login");
       return;
     }
+    if (addingToCart) return;
+    setAddingToCart(true);
     try {
       // Pass product_variant_id if available, else null
       const productVariantId =
@@ -52,6 +57,8 @@ const ProductCard = ({ product }) => {
     } catch (err) {
       console.error("Failed to add product to cart", err);
       toast.error("Failed to add product to cart");
+    } finally {
+      setAddingToCart(false);
     }
   };
 
@@ -61,11 +68,15 @@ const ProductCard = ({ product }) => {
       navigate("/login");
       return;
     }
+    if (addingToWishlist) return;
+    setAddingToWishlist(true);
     try {
       await addToWishlist(product.id);
       toast.success("Added to wishlist");
     } catch (err) {
       toast.error("Failed to add to wishlist");
+    } finally {
+      setAddingToWishlist(false);
     }
   };
 
@@ -94,11 +105,11 @@ const ProductCard = ({ product }) => {
           <h3>{product.name}</h3>
           <p>${product.price ? Number(product.price).toFixed(2) : "N/A"}</p>
         </div>
-        <button className="add-to-cart-btn" onClick={handleAddToCart}>
-          <ShoppingCart size={16} /> Add to cart
+        <button className="add-to-cart-btn" onClick={handleAddToCart} disabled={addingToCart}>
+          <ShoppingCart size={16} /> {addingToCart ? "Adding..." : "Add to cart"}
         </button>
-        <button className="favorite-btn" name="Add to wishlist" onClick={handleAddToWishlist}>
-          <Heart size={20} />
+        <button className="favorite-btn" name="Add to wishlist" onClick={handleAddToWishlist} disabled={addingToWishlist}>
+          <Heart size={20} /> {addingToWishlist ? "Adding..." : ""}
         </button>
       </div>
     </div>

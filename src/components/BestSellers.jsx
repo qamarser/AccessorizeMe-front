@@ -6,14 +6,20 @@ import "../styling/BestSellers.css";
 
 const BestSellers = () => {
   const [bestSellers, setBestSellers] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const loadBestSellers = async () => {
       const data = await fetchBestSellers();
       setBestSellers(data);
+      setLoading(false);
     };
     loadBestSellers();
   }, []);
+
+  if (loading) {
+    return <p className="text-center my-8">Loading best sellers...</p>;
+  }
 
   if (bestSellers.length === 0) {
     return <p className="text-center my-8">No best sellers found.</p>;

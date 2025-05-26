@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { fetchCustomerOrders } from "../api/orderApi";
+import "../styling/UserProfile.css"; 
 
 const CustomerOrders = () => {
   const [orders, setOrders] = useState([]);
