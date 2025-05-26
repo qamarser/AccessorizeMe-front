@@ -89,6 +89,7 @@
 .product-description {
   color: #4b5563;
   margin-bottom: 1rem;
+  text-align: justify;
 }
 
 .color-selector {

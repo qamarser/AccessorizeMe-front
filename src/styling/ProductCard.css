@@ -5,16 +5,18 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   /* cursor: pointer; */
   width: 250px;
-  height: 300px;
+  height: auto;
 }
 
 .product-image {
   width: 100%;
-  height: auto;
+  height: 180px;
   object-fit: contain;
   display: block;
+  background-color: #f8f8f8; 
 }
 
 .hover-content {
@@ -29,6 +31,7 @@
   gap: 8px;
   opacity: 0;
   transition: opacity 0.3s ease;
+  min-height: 100px;
 }
 
 .product-card:hover .hover-content {
@@ -64,11 +67,11 @@
 @media (max-width: 600px) {
   .product-card {
     width: 100%;
-    height: auto;
+    height: 140px;
   }
 
   .product-image {
-    height: auto;
+    height: 220px;
   }
 }
 @media (max-width: 768px) {
@@ -113,22 +116,23 @@
   .add-to-cart-btn,
   .favorite-btn {
     font-size: 14px;
-    padding: 6px;
+    padding: 4px;
   }
 }
 
 @media (min-width: 1920px) {
   .product-card {
     width: 280px;
-    height: 320px;
+    height: auto;
   }
 
   .product-image {
-    height: 280px;
+    height: 230px;
   }
 
   .hover-content {
     padding: 12px;
+    min-height: 100px;
   }
 
   .add-to-cart-btn,

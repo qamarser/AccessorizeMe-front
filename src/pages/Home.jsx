@@ -4,7 +4,7 @@ import { fetchAllCategories } from "../api/categoryApi";
 import CategoryList from "../components/CategoryList";
 import HeroSection from "../components/HeroSection";
 import BestSellers from "../components/BestSellers";
-import Button from "../components/Button"
+import Button from "../components/Button";
 function Home() {
   const [categories, setCategories] = useState([]);
   const [products, setProducts] = useState([]);
@@ -41,7 +41,7 @@ function Home() {
       <div className="view-more-container">
         <Button
           className="contact-button"
-          onClick={() => navigate( "/shop" )}
+          onClick={() => navigate("/shop")}
           text="View More"
         />
       </div>

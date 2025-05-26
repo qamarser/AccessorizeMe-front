@@ -57,7 +57,7 @@ const CategoryList = ({
                 backgroundRepeat: "no-repeat",
               }}
             >
-              <label>{cat.name}</label>
+              <label>{cat.name.trim()}</label>
             </li>
           ))
         ) : (

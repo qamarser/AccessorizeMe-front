@@ -210,10 +210,6 @@ export default function ProductDetails() {
           ))}
         </div>
 
-        {/* <p className="product-stock">
-          {product.stock > 0 ? "In Stock" : "Out of Stock"}
-        </p> */}
-
         {/* Quantity + Add to Cart */}
         <div className="action-buttons">
           <button

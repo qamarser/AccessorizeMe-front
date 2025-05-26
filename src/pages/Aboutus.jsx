@@ -1,21 +1,27 @@
 import React from "react";
 import "../styling/Aboutus.css";
 
-function Aboutus() {
+function Aboutus()
+{
+  const formatText = (text) => {
+    return text
+      .toLowerCase()
+      .replace(/(^\s*\w|[\.\!\?]\s*\w)/g, (c) => c.toUpperCase());
+  };
+
   return (
     <div className="about-us">
       <section className="who-we-are">
         <h2>Who We Are</h2>
         <p>
-          Accessories is An Online Platform Built For Tech Lovers Who Believe
-          Phone Accessories Should Do More Than Just Function – They Should
-          Rellect Personality, Style, And Innovation. We Are Positionate About
-          Believing Products That Not Only Protect Your Devices But Enhance Your
-          Everyday Mobile Experience.
+          {formatText(
+            "AccessorizeMe is an online platform built for tech lovers who believe phone accessories should do more than just function. They should reflect personality, style, and innovation. We are passionate about creating products that not only protect your devices but enhance your everyday mobile experience."
+          )}
         </p>
         <p>
-          Driven By Quality, Creativity, And Convenience, Our Goal Is To Make
-          Mobile Personalization Easy, Enjoyable, And Affordable For Everyone.
+          {formatText(
+            "Driven by quality, creativity, and convenience, our goal is to make mobile personalization easy, enjoyable, and affordable for everyone."
+          )}
         </p>
         <img
           src="/image27.png"
@@ -29,37 +35,37 @@ function Aboutus() {
 
         <div className="offer-categories">
           <p>
-            We Specialize In High-Quality Phone Accessories Across A Variety Of
-            Categories, including:
+            {formatText(
+              "We specialize in high-quality phone accessories across a variety of categories, including:"
+            )}
           </p>
           <ul>
             <li>
-              <strong>Phone Cores & Covers</strong> – Tromp, Protective, And
-              Customizable
+              <strong>Phone Cases & Covers</strong> – Trendy, protective, and
+              customizable.
             </li>
             <li>
-              <strong>Chargers & Codes</strong> – Fast-Charging And Durable
-              Options
+              <strong>Chargers & Cables</strong> – Fast-charging and durable
+              options.
             </li>
             <li>
-              <strong>Headphones & Audio Gear</strong> – For Immediate Sound
-              Experiences
+              <strong>Headphones & Audio Gear</strong> – For immersive sound
+              experiences.
             </li>
             <li>
-              <strong>Power Banks</strong> – Fortune Power For
-              On-Thre-Go.Unstyles
+              <strong>Power Banks</strong> – Reliable power for on-the-go needs.
             </li>
             <li>
-              <strong>Card Accessories</strong> – Smart Ads-Don For A Smooth
-              Drive
+              <strong>Car Accessories</strong> – Smart add-ons for a smooth
+              drive.
             </li>
             <li>
-              <strong>Smart Accessories</strong> – Stay Connected With Modern
-              Godgets
+              <strong>Smart Accessories</strong> – Stay connected with modern
+              gadgets.
             </li>
             <li>
-              <strong>Mobile Snacks & Holders</strong> – For Convenience And
-              Comfort
+              <strong>Mobile Stands & Holders</strong> – For convenience and
+              comfort.
             </li>
           </ul>
         </div>
@@ -67,18 +73,19 @@ function Aboutus() {
         <div className="key-features">
           <h3>Our Key Features:</h3>
           <ul>
-            <li>Product Verbalances Like Colors And Styles</li>
-            <li>Custom Image Libraries For Personalized Saves</li>
-            <li>Day Navigation, Smooth Checksuit, And Secure Payment</li>
-            <li>Role-Based Deathboard for Customers And Admins</li>
-            <li>Fast Shipping And Responsive Customer Support</li>
+            <li>Product variations like colors and styles.</li>
+            <li>Custom image libraries for personalized designs.</li>
+            <li>Easy navigation, smooth checkout, and secure payment.</li>
+            <li>Role-based dashboard for customers and admins.</li>
+            <li>Fast shipping and responsive customer support.</li>
           </ul>
         </div>
       </section>
 
       <p className="closing-statement">
-        At AccessoriesMe, We Make Accessorizing Your Phone Fun, Easy, And
-        Totally You.
+        {formatText(
+          "At AccessorizeMe, we make accessorizing your phone fun, easy, and totally you."
+        )}
       </p>
     </div>
   );
